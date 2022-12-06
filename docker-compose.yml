@@ -1,0 +1,157 @@
+version: "3"
+
+services:
+
+  nginx:
+    image: "${PROJECT_NAME}/nginx:dev"
+    restart: unless-stopped
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    container_name: "${PROJECT_NAME}_nginx"
+    ports:
+      - '80:80' #thamelmart
+      - '443:443' #thamelmar
+    volumes:
+      - ./api:/var/www/api
+      - ./nginx/log:/var/log/nginx
+    networks:
+      backend:
+        aliases:
+          - api.techbizz.test
+      frontend:
+        aliases:
+          - admin.techbizz.test
+          - store.techbizz.test
+    depends_on:
+      - api
+      # - admin
+      # - store
+
+  # admin:
+  #   container_name: "${PROJECT_NAME}_admin"
+  #   image: "${PROJECT_NAME}/admin:dev"
+  #   build:
+  #     context: ./projects/admin
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./projects/admin:/admin
+  #   ports:
+  #     - '3000:3000'
+  #   command: sh -c "yarn && yarn dev"
+  #   networks:
+  #     - frontend
+  #     - backend
+
+  # store:
+  #   container_name: "${PROJECT_NAME}_store"
+  #   image: "${PROJECT_NAME}/store:dev"
+  #   build:
+  #     context: ./projects/store-ui
+  #     dockerfile: Dockerfile
+  #   restart: unless-stopped
+  #   # user: "1000:1000"
+  #   volumes:
+  #     - ./projects/store-ui:/store
+  #   ports:
+  #     - '3001:3001'
+  #   command: sh -c "yarn && yarn dev --port=3001"
+  #   networks:
+  #     - frontend
+  #     - backend
+
+  api:
+    container_name: "${PROJECT_NAME}_php"
+    image: "${PROJECT_NAME}/api:dev"
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    # environment:
+    #   UPLOAD_LIMI: 100M
+    #   PHP_MEMORY_LIMIT: "${PHP_MEMORY_LIMIT}"
+    #   COMPOSER_MEMORY_LIMIT: '-1'
+    user: "apache:apache"
+    working_dir: /var/www/api
+    environment:
+            PHP_IDE_CONFIG: "serverName=gravity"
+    extra_hosts:
+        - "host.docker.internal:host-gateway"
+    volumes:
+      - ./api/conf.d/php.ini:/usr/local/etc/php/php.ini
+      - ./api/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./api/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
+      - ./api:/var/www/api
+    # command: "composer install"
+    ports:
+      - '9000:9000'
+    networks:
+      - backend
+    depends_on:
+      - mysql
+      - pma
+      - redis
+
+  mysql:
+    container_name: "${PROJECT_NAME}_mysql"
+    image: "${PROJECT_NAME}/mysql:dev"
+    build: ./mysql
+    volumes:
+      - "persisted_volume:/var/lib/mysql"
+      - ${MYSQL_ENTRYPOINT_INITDB}:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      TZ: ${TIMEZONE}
+    networks:
+      - backend
+
+  pma:
+    image: phpmyadmin/phpmyadmin
+    container_name: "${PROJECT_NAME}_pma"
+    links:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - "8090:80"
+    networks:
+      - backend
+
+  redis:
+    build: ./redis
+    container_name: "${PROJECT_NAME}_redis"
+    image: "${PROJECT_NAME}/redis:dev"
+    volumes:
+      - "persisted_volume:/data"
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - backend
+
+  rabbitmq:
+    restart: always
+    container_name: "${PROJECT_NAME}_rabbitmq"
+    image: rabbitmq:3-management
+    volumes:
+      - persisted_volume:/var/lib/rabbitmq
+    ports:
+      - 15672:15672
+      - 5672:5672
+    networks:
+      - backend
+      - frontend
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+volumes:
+  persisted_volume:
