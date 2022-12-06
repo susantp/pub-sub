@@ -11,8 +11,8 @@ export default function Messagebox({ message }) {
                 <p>
                     <b>{message.user}</b>
                 </p>
-                <p>{message.message}</p>
-                <p>{message.createdAt}</p>
+                {/*<p>{message.message}</p>*/}
+                {/*<p>{message.createdAt}</p>*/}
             </div>
         </div>
     )
