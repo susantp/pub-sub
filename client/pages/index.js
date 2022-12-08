@@ -3,9 +3,9 @@ import Head from 'next/head';
 import Pusher from "pusher-js";
 import styles from '../styles/Home.module.css';
 import React, { useEffect, useRef, useState } from 'react';
+import usePusher from '../hooks/usePusher';
 
 export default function Home() {
-
     const [messages, setMessages] = useState([])
     const userRef = useRef()
 
@@ -18,18 +18,26 @@ export default function Home() {
         }).catch(error => {
             console.log(error)
         })
+        /* const pusher = new Pusher('a1091d9e1a6ed6652372', {
+            cluster: 'us3',
+            encrypted: true
+        })
+        const channel = pusher.subscribe('public.room');
+        channel.bind('message-new', () => {
+            channel.trigger('client-public.room', { id: 787, user: 'paudel' })
+        }) */
+        
     }
 
     useEffect(() => {
-        Axios.defaults.baseURL = process.env.REACT_APP_API_BASE_URL;
-
         const pusher = new Pusher('a1091d9e1a6ed6652372', {
             cluster: 'us3',
             encrypted: true
-        });
+        })
         const channel = pusher.subscribe('public.room');
 
         channel.bind('message.new', (data) => {
+            console.log(data)
             setMessages(oldMessages => [...oldMessages, data])
         })
         return () => {

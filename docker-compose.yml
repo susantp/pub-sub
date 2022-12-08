@@ -44,22 +44,22 @@ services:
   #     - frontend
   #     - backend
 
-  # store:
-  #   container_name: "${PROJECT_NAME}_store"
-  #   image: "${PROJECT_NAME}/store:dev"
-  #   build:
-  #     context: ./projects/store-ui
-  #     dockerfile: Dockerfile
-  #   restart: unless-stopped
-  #   # user: "1000:1000"
-  #   volumes:
-  #     - ./projects/store-ui:/store
-  #   ports:
-  #     - '3001:3001'
-  #   command: sh -c "yarn && yarn dev --port=3001"
-  #   networks:
-  #     - frontend
-  #     - backend
+  client:
+    container_name: "${PROJECT_NAME}_client"
+    image: "${PROJECT_NAME}/client:dev"
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    # user: "1000:1000"
+    volumes:
+      - ./client:/client
+    ports:
+      - '3000:3000'
+    command: sh -c "yarn && yarn build && yarn start"
+    networks:
+      - frontend
+      - backend
 
   api:
     container_name: "${PROJECT_NAME}_php"
