@@ -11,8 +11,7 @@ class PubSubController extends Controller
     {
         $id = rand(1,99999);
         $user = $request->user ?? 'susant';
-        $message = $request->message ?? 'hello';
-        event(new MessageEvent($id, $user, $message));
+        event(new MessageEvent($id, $user));
         return response()->json(['message' => 'index']);
     }
 
@@ -20,8 +19,7 @@ class PubSubController extends Controller
     {
         $id = rand(1,99999);
         $user = $request->user ?? 'susant';
-        $message = $request->message ?? 'hello';
-        event(new MessageEvent($id, $user, $message));
+        event(new MessageEvent($id, $user));
         return response()->json(['message' => 'postMessage']);
     }
 }

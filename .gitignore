@@ -1,2 +1,5 @@
 .env
 .idea/
+client/.next/
+client/node_modules/
+api/vendor/

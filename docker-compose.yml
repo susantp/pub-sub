@@ -135,18 +135,18 @@ services:
     networks:
       - backend
 
-  rabbitmq:
-    restart: always
-    container_name: "${PROJECT_NAME}_rabbitmq"
-    image: rabbitmq:3-management
-    volumes:
-      - persisted_volume:/var/lib/rabbitmq
-    ports:
-      - 15672:15672
-      - 5672:5672
-    networks:
-      - backend
-      - frontend
+  # rabbitmq:
+  #   restart: always
+  #   container_name: "${PROJECT_NAME}_rabbitmq"
+  #   image: rabbitmq:3-management
+  #   volumes:
+  #     - persisted_volume:/var/lib/rabbitmq
+  #   ports:
+  #     - 15672:15672
+  #     - 5672:5672
+  #   networks:
+  #     - backend
+  #     - frontend
 
 networks:
   frontend:

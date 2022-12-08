@@ -17,24 +17,22 @@ class MessageEvent implements ShouldBroadcast
 
     private $id;
     private $user;
-    private $message;
+    
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($id, $user,  $message)
+    public function __construct($id, $user)
     {
         $this->id = $id;
         $this->user = $user;
-        $this->message = $message;
     }
     public function broadcastWith()
     {
         return [
             'id' => $this->id,
             'user' => $this->user,
-            'message' => $this->message,
             'createdAt' => now()->toDateTimeString(),
         ];
     }
@@ -54,6 +52,7 @@ class MessageEvent implements ShouldBroadcast
     // }
     public function broadcastOn()
     {
+        // return ['public.room'];
         return new Channel('public.room');
     }
 }
