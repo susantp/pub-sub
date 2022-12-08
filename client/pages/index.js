@@ -1,10 +1,7 @@
 import axios from 'axios';
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Head from 'next/head';
+import styles from '../styles/Home.module.css';
 import PublicMessagesPage from './components/PublicMessagesPage';
-import {useEffect} from "react";
-import Axios from "axios";
-import Pusher from "pusher-js";
 
 export default function Home() {
     const handleSendMessage = async (e) => {
