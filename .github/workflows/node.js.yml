@@ -30,12 +30,12 @@ jobs:
 
     - name: Install dependencies
       working-directory: ./service
-      run: npm install
+      run: yarn
 
     - name: Run the tests
       working-directory: ./service
-      run: npm test
+      run: yarn lint
 
     - name: Build
       working-directory: ./service
-      run: npm run build
+      run: yarn build
