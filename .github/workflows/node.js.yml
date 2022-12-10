@@ -20,9 +20,9 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
-    working-directory: ./consumer
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
+      working-directory: ./consumer
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
@@ -34,9 +34,10 @@ jobs:
     - run: npm lint
     - run: npm run build --if-present
 
-    working-directory: ./service
+    
     - uses: actions/checkout@v3
     - name: Use Node.js ${{ matrix.node-version }}
+      working-directory: ./service
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
