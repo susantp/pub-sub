@@ -1,6 +1,6 @@
 FROM node:latest
 
-RUN mkdir -p /consumer
+RUN mkdir -p /service
 
 # Copying source files
 # COPY . /app
@@ -8,7 +8,7 @@ RUN mkdir -p /consumer
 # Installing dependencies
 # COPY package*.json /admin
 
-WORKDIR /consumer
+WORKDIR /service
 # VOLUME [ "/app" ]
 # RUN yarn
 
@@ -18,4 +18,4 @@ WORKDIR /consumer
 
 # Running the app
 # CMD "yarn" "dev"
-EXPOSE 3000
+EXPOSE 3001

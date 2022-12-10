@@ -21,42 +21,61 @@ services:
           - api.techbizz.test
       frontend:
         aliases:
-          - admin.techbizz.test
-          - store.techbizz.test
+          - consumer.techbizz.test
+          - service.techbizz.test
     depends_on:
       - api
-      # - admin
-      # - store
+      - consumer
+      - service
 
-  # admin:
-  #   container_name: "${PROJECT_NAME}_admin"
-  #   image: "${PROJECT_NAME}/admin:dev"
-  #   build:
-  #     context: ./projects/admin
-  #     dockerfile: Dockerfile
-  #   restart: unless-stopped
-  #   volumes:
-  #     - ./projects/admin:/admin
-  #   ports:
-  #     - '3000:3000'
-  #   command: sh -c "yarn && yarn dev"
-  #   networks:
-  #     - frontend
-  #     - backend
-
-  client:
-    container_name: "${PROJECT_NAME}_client"
-    image: "${PROJECT_NAME}/client:dev"
+  consumer:
+    container_name: "${PROJECT_NAME}_consumer"
+    image: "${PROJECT_NAME}/consumer:dev"
     build:
-      context: ./client
+      context: ./consumer
       dockerfile: Dockerfile
     restart: unless-stopped
-    # user: "1000:1000"
+    user: "1000:1000"
+    environment:
+      REACT_API_HOST: ''
+      REACT_PUSHER_APP_ID: #####
+      REACT_PUSHER_APP_KEY: #####
+      REACT_APP_API_BASE_URL: http://api.techbizz.test/api
+      REACT_PUSHER_HOST:
+      REACT_PUSHER_APP_CLUSTER: ###
+      REACT_PUSHER_PORT: 80
+      REACT_PUSHER_SCHEME: http
     volumes:
-      - ./client:/client
+      - ./consumer:/consumer
     ports:
       - '3000:3000'
-    command: sh -c "yarn && yarn build && yarn start"
+    command: sh -c "yarn && yarn dev"
+    networks:
+      - frontend
+      - backend
+
+  service:
+    container_name: "${PROJECT_NAME}_service"
+    image: "${PROJECT_NAME}/service:dev"
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    user: "1000:1000"
+    environment:
+      REACT_API_HOST: ''
+      REACT_PUSHER_APP_ID: #####
+      REACT_PUSHER_APP_KEY: #####
+      REACT_APP_API_BASE_URL: http://api.techbizz.test/api
+      REACT_PUSHER_HOST:
+      REACT_PUSHER_APP_CLUSTER: ###
+      REACT_PUSHER_PORT: 80
+      REACT_PUSHER_SCHEME: http
+    volumes:
+      - ./service:/service
+    ports:
+      - '3001:3001'
+    command: sh -c "yarn && yarn dev"
     networks:
       - frontend
       - backend
@@ -68,16 +87,10 @@ services:
       context: ./api
       dockerfile: Dockerfile
     restart: unless-stopped
-    # environment:
-    #   UPLOAD_LIMI: 100M
-    #   PHP_MEMORY_LIMIT: "${PHP_MEMORY_LIMIT}"
-    #   COMPOSER_MEMORY_LIMIT: '-1'
     user: "apache:apache"
     working_dir: /var/www/api
-    environment:
-            PHP_IDE_CONFIG: "serverName=gravity"
     extra_hosts:
-        - "host.docker.internal:host-gateway"
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./api/conf.d/php.ini:/usr/local/etc/php/php.ini
       - ./api/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
@@ -134,19 +147,6 @@ services:
       - "${REDIS_PORT}:6379"
     networks:
       - backend
-
-  # rabbitmq:
-  #   restart: always
-  #   container_name: "${PROJECT_NAME}_rabbitmq"
-  #   image: rabbitmq:3-management
-  #   volumes:
-  #     - persisted_volume:/var/lib/rabbitmq
-  #   ports:
-  #     - 15672:15672
-  #     - 5672:5672
-  #   networks:
-  #     - backend
-  #     - frontend
 
 networks:
   frontend:

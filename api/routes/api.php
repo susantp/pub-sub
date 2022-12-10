@@ -20,3 +20,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::get('socket', [PubSubController::class, 'index']);
 Route::post('post-message', [PubSubController::class, 'postMessage']);
+
+
+
