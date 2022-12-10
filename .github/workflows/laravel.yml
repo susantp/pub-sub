@@ -42,4 +42,4 @@ jobs:
       run: vendor/bin/phpunit
     - name: Execute static analysis via larastan
       working-directory: ./api
-      run: vendor/bin/phpstan analyse --memory-limit=2G
+      run: composer phpstan

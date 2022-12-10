@@ -48,7 +48,11 @@
         ],
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
+        ],
+        "phpstan": [
+            "@php -d memory_limit=1024M vendor/bin/phpstan analyze -c phpstan.neon -l 5"
         ]
+
     },
     "extra": {
         "laravel": {
