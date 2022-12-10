@@ -13,11 +13,13 @@ use Illuminate\Support\Str;
 
 class MessageEvent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     private $id;
     private $user;
-    
+
     /**
      * Create a new event instance.
      *

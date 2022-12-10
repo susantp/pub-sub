@@ -15,7 +15,7 @@ jobs:
     - uses: shivammathur/setup-php@v2
       with:
         php-version: '8.2'
-        tools: php-cs-fixer, phpstan, composer:v2
+        tools: phpstan, composer:v2
     - uses: actions/checkout@v3
     - name: Copy .env
       working-directory: ./api
