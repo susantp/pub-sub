@@ -51,8 +51,13 @@ services:
       - '3000:3000'
     command: sh -c "yarn && yarn dev"
     networks:
-      - frontend
-      - backend
+      backend:
+        aliases:
+          - api.techbizz.test
+      frontend:
+        aliases:
+          - consumer.techbizz.test
+          - service.techbizz.test
 
   service:
     container_name: "${PROJECT_NAME}_service"
@@ -77,8 +82,13 @@ services:
       - '3001:3001'
     command: sh -c "yarn && yarn dev"
     networks:
-      - frontend
-      - backend
+      backend:
+        aliases:
+          - api.techbizz.test
+      frontend:
+        aliases:
+          - consumer.techbizz.test
+          - service.techbizz.test
 
   api:
     container_name: "${PROJECT_NAME}_php"
@@ -100,7 +110,13 @@ services:
     ports:
       - '9000:9000'
     networks:
-      - backend
+      backend:
+        aliases:
+          - api.techbizz.test
+      frontend:
+        aliases:
+          - consumer.techbizz.test
+          - service.techbizz.test
     depends_on:
       - mysql
       - pma
