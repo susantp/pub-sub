@@ -19,6 +19,7 @@ jobs:
         node-version: [14.x, 16.x, 18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
+##########################################
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
@@ -27,15 +28,28 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-
-    - name: Install dependencies
+###########################################
+    - name: Install Service dependencies
       working-directory: ./service
       run: yarn
 
-    - name: Run the tests
+    - name: Install Consumer dependencies
+      working-directory: ./service
+      run: yarn
+##########################################
+    - name: Run the Service tests
+      working-directory: ./service
+      run: yarn lint    
+    
+    - name: Run the Consumer tests
       working-directory: ./service
       run: yarn lint
+##########################################
+    - name: Build
+      working-directory: ./service
+      run: yarn build    
 
     - name: Build
       working-directory: ./service
       run: yarn build
+##########################################
