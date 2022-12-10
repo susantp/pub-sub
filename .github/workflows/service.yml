@@ -1,12 +1,11 @@
-name: CD
+name: Service
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  name: Service
-  build:
+  service-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
