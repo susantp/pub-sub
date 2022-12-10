@@ -1,11 +1,12 @@
 import axios from "axios";
 import {logOut} from "./auth";
 import {toast} from "react-toastify";
-
-export default function api() {
+import getConfig from 'next/config'
+export default function apiService() {
+    const {publicRuntimeConfig: config} = getConfig()
     const unAuthenticatedToast = 'unAuthenticated'
     const api = axios.create({
-        baseURL: process.env.apiHost,
+        baseURL: config.hostApiUrl,
         withCredentials: true,
         responseType: 'json',
         // Accept: "application/json"

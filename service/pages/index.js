@@ -15,9 +15,16 @@ export default function Home() {
 
     const onSubmit = async (data) => {
         const {email, password} = data
-        await axios.post(`${config.hostAuthUrl}/service/login`, {email, password}).then(response => {
-            console.log(response)
-        })
+        login(data)
+        // await axios
+        //     .post(`${config.hostAuthUrl}/service/login`, {email, password})
+        //     .then(response => {
+        //         console.log(response.data)
+        //     })
+        //     .catch(error => {
+        //         alert(error?.response?.data[1]?.message)
+        //         console.log(error?.response?.data[1]?.message)
+        //     })
     }
 
     async function handleSendMessage(e) {

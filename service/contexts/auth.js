@@ -1,6 +1,6 @@
 import {createContext, useContext, useEffect, useState} from "react";
 import router, {useRouter} from "next/router";
-import api from "../utils/api";
+import apiService from "../utils/apiService";
 import {toast} from "react-toastify";
 import Cookies from 'js-cookie'
 import axios from "axios";
@@ -21,7 +21,7 @@ export const AuthContextProvider = ({children}) => {
 
     useEffect(() => {
         async function loadUserFromCookies() {
-            await api().get(`/user`)
+            await apiService().get(`/user`)
                 .then(({data}) => {
                     if (!data[0].error) {
                         setUser(data[1].user)
@@ -38,8 +38,8 @@ export const AuthContextProvider = ({children}) => {
     }, [])
 
     const login = async (data) => {
-        await axios.get(`${process.env.host}/api/csrf-cookie`).then(response => {
-            api().post(`/v1/auth/login`, data)
+        await axios.get(`${config.hostApiUrl}/csrf-cookie`).then(response => {
+            apiService().post(`${config.hostAuthUrl}/service/login`, data)
                 .then(({data}) => {
                     if (!data[0].error) {
                         const {token, user} = data[1]
@@ -66,7 +66,7 @@ export const AuthContextProvider = ({children}) => {
          * **/
     }
     const logout = () => {
-        api().get(`v1/auth/logout`).then(({data}) => {
+        apiService().get(`v1/auth/logout`).then(({data}) => {
             if (!data[1].error) {
                 setUser(null)
                 window.location.pathname = '/'
