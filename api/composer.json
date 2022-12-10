@@ -53,7 +53,7 @@
       "@php artisan key:generate --ansi"
     ],
     "phpstan": [
-      "@php -d memory_limit=1024M vendor/bin/phpstan analyze -c phpstan.neon -l 5 --xdebug"
+      "@php -d memory_limit=1024M vendor/bin/phpstan analyze --xdebug -c phpstan.neon --xdebug"
     ],
     "fixer": [
       "@php artisan fixer:fix"
