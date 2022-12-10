@@ -34,7 +34,7 @@ jobs:
       run: yarn
 
     - name: Install Consumer dependencies
-      working-directory: ./service
+      working-directory: ./consumer
       run: yarn
 ##########################################
     - name: Run the Service tests
@@ -42,14 +42,14 @@ jobs:
       run: yarn lint    
     
     - name: Run the Consumer tests
-      working-directory: ./service
+      working-directory: ./consumer
       run: yarn lint
 ##########################################
-    - name: Build
+    - name: Service Build
       working-directory: ./service
       run: yarn build    
 
-    - name: Build
-      working-directory: ./service
+    - name: Consumer Build
+      working-directory: ./consumer
       run: yarn build
 ##########################################
