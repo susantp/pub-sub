@@ -23,7 +23,7 @@ export const AuthContextProvider = ({children}) => {
 
     useEffect(() => {
         async function loadUserFromCookies() {
-            if (!user)
+            if (user)
                 await apiService().get(`/user`)
                     .then(({data}) => {
                         if (!data[0].error) {
