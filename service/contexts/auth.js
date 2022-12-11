@@ -7,6 +7,7 @@ import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
+import Home from "../pages";
 
 const AuthContext = createContext({
     user: null, login: () => {
@@ -45,7 +46,8 @@ export const AuthContextProvider = ({children}) => {
             apiService().post(`${config.hostAuthUrl}/service/login`, data)
                 .then(({data}) => {
                     if (!data[0].error) {
-                        const {token, user} = data[1]
+                        console.log()
+                        const {token, user} = data[1].data
                         Cookies.set('token', token, {expires: 86400, sameSite: 'lax'})
                         if (user) setUser(user);
                         router.push('/dashboard')
@@ -91,9 +93,10 @@ export const ProtectRoute = ({children}) => {
     const {user, isAuthenticated, loading} = useContext(AuthContext);
     const router = useRouter()
     if (loading || (!isAuthenticated && window.location.pathname !== '/')) {
-        return <div className={`container mx-auto`}>
-            <Skeleton height={40} count={5}/>
-        </div>
+        // return <div className={`container mx-auto`}>
+        //     <Skeleton height={40} count={5}/>
+        // </div>
+        return <Home/>
     }
 
     return children;

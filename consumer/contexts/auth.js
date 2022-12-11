@@ -7,6 +7,7 @@ import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
+import Home from "../pages";
 
 const AuthContext = createContext({
     user: null, login: () => {
@@ -23,17 +24,17 @@ export const AuthContextProvider = ({children}) => {
 
     useEffect(() => {
         async function loadUserFromCookies() {
-            if (user)
-                await apiService().get(`/user`)
-                    .then(({data}) => {
-                        if (!data[0].error) {
-                            setUser(data[1].user)
-                            // router.pathname === '/' && router.back()
-                        }
-                    })
-                    .catch(error => {
-                        console.log('error', error)
-                    })
+            await apiService().get(`/user`)
+                .then(({data}) => {
+                    if (!data[0].error) {
+                        const {token, user} = data[1].data
+                        setUser(data[1].user)
+                        // router.pathname === '/' && router.back()
+                    }
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
             setLoading(false)
         }
 
@@ -45,7 +46,7 @@ export const AuthContextProvider = ({children}) => {
             apiService().post(`${config.hostAuthUrl}/consumer/login`, data)
                 .then(({data}) => {
                     if (!data[0].error) {
-                        const {token, user} = data[1]
+                        const {token, user} = data[1].data
                         Cookies.set('token', token, {expires: 86400, sameSite: 'lax'})
                         if (user) setUser(user);
                         router.push('/dashboard')
@@ -90,10 +91,13 @@ export default AuthContext
 export const ProtectRoute = ({children}) => {
     const {user, isAuthenticated, loading} = useContext(AuthContext);
     const router = useRouter()
-    if (loading || (!isAuthenticated && window.location.pathname !== '/')) {
-        return <div className={`container mx-auto`}>
-            <Skeleton height={40} count={5}/>
-        </div>
+    /*    if (loading || (!isAuthenticated && window.location.pathname !== '/')) {
+            return <div className={`container mx-auto`}>
+                <Skeleton height={40} count={5}/>
+            </div>
+        }*/
+    if (!isAuthenticated && router.pathname !== '/') {
+        return <Home/>
     }
 
     return children;

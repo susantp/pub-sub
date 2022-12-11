@@ -33,14 +33,6 @@ export default function Home() {
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
         login(data)
-        await callApi()
-            .post(`/auth/consumer/login`, data)
-            .then(response => {
-                console.log(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
     }
 
     useEffect(() => {
@@ -62,7 +54,7 @@ export default function Home() {
     return (
         <>
             <HtmlPageHead
-                title={`Consumer Login`}
+                title={`Service Login`}
                 metaName={`description`}
                 linkHref={`/favicon.ico`}
                 linkRel={`icon`}
@@ -90,7 +82,7 @@ export default function Home() {
                                        type={`email`}
                                        useFormObject={{...register("email", {required: true})}}
                                        classes={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                                       defaultValue={``} placeholder={`email`}
+                                       defaultValue={`abc@abc.com`} placeholder={`email`}
                             />
                         </div>
                         <div className="mb-6">
@@ -101,7 +93,7 @@ export default function Home() {
                                        type={`password`}
                                        useFormObject={{...register("password", {required: true})}}
                                        classes={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                                       defaultValue={``} placeholder={`******************`}
+                                       defaultValue={`123456789`} placeholder={`******************`}
                             />
                         </div>
                         <div className="flex items-center justify-between">

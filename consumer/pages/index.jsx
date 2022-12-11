@@ -1,10 +1,8 @@
-import {default as axios} from 'axios';
 import Pusher from "pusher-js";
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useForm} from "react-hook-form";
 import AuthContext from "../contexts/auth";
 import getConfig from 'next/config'
-import {useLocation} from "../hooks/useLocation";
 import {toast} from "react-toastify";
 import HtmlLabel from "../components/HtmlLabel";
 import HtmlInput from "../components/Htmlinput";
@@ -14,6 +12,7 @@ import PositionContext from "../contexts/position";
 export default function Home() {
     const {publicRuntimeConfig: config} = getConfig()
     const [messages, setMessages] = useState([])
+    const userRef = useRef()
     const {register, handleSubmit, watch, formState: {errors}} = useForm();
     const {login} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
@@ -33,14 +32,6 @@ export default function Home() {
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
         login(data)
-        await axios
-            .post(`${config.hostAuthUrl}/service/login`, data)
-            .then(response => {
-                console.log(response.data)
-            })
-            .catch(error => {
-                console.log(error)
-            })
     }
 
     useEffect(() => {
@@ -62,7 +53,7 @@ export default function Home() {
     return (
         <>
             <HtmlPageHead
-                title={`Service Login`}
+                title={`Consumer Login`}
                 metaName={`description`}
                 linkHref={`/favicon.ico`}
                 linkRel={`icon`}
@@ -90,7 +81,7 @@ export default function Home() {
                                        type={`email`}
                                        useFormObject={{...register("email", {required: true})}}
                                        classes={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                                       defaultValue={``} placeholder={`email`}
+                                       defaultValue={`abc@abc.com`} placeholder={`email`}
                             />
                         </div>
                         <div className="mb-6">
@@ -101,7 +92,7 @@ export default function Home() {
                                        type={`password`}
                                        useFormObject={{...register("password", {required: true})}}
                                        classes={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
-                                       defaultValue={``} placeholder={`******************`}
+                                       defaultValue={`123456789`} placeholder={`******************`}
                             />
                         </div>
                         <div className="flex items-center justify-between">
