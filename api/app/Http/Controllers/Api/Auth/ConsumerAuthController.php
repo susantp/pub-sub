@@ -13,18 +13,19 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ConsumerAuthController extends Controller
 {
-    public function register(Request $request): Response
+    public function register(ConsumerLoginRequest $request): Response
     {
         return response()->ok($request->all());
     }
 
-    public function login(ConsumerLoginRequest $request): Response
+    public function login(Request $request): Response
     {
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return response()->fail('Invalid credentials', SymfonyResponse::HTTP_UNAUTHORIZED);
         }
 
         try {
+            $request->session()->regenerate();
             $user = Auth::user();
             $success['token'] = $user->createToken(str()->slug(config('app.name')))->plainTextToken;
             $success['user'] = ['id' => $user->id, 'name' => $user->name, 'email' => $user->email];
