@@ -25,7 +25,7 @@ class ConsumerLoginRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email'],
-            'password' => ['required'], 
+            'password' => ['required'],
             'coords' => ['array']
         ];
     }
