@@ -2,16 +2,18 @@ import axios from "axios";
 import {logOut} from "./auth";
 import {toast} from "react-toastify";
 import getConfig from 'next/config'
-export default function apiService() {
+
+export default function apiService(token = '') {
     const {publicRuntimeConfig: config} = getConfig()
     const unAuthenticatedToast = 'unAuthenticated'
     const api = axios.create({
         baseURL: config.hostApiUrl,
+        timeout: 2500,
         withCredentials: true,
         responseType: 'json',
-        // Accept: "application/json"
+        maxRedirects: 5,
+        decompress: true
     })
-
     // // Request interceptor. Runs before your request reaches the server
     // const onRequest = (config) => {
     //     // If http method is `post | put | delete` and XSRF-TOKEN cookie is
@@ -42,7 +44,7 @@ export default function apiService() {
     api.interceptors.response.use(response => response, error => {
         if (error.response?.status === 401) {
             logOut()
-            toast('Unauthenticated', {toastId:unAuthenticatedToast, pauseOnFocusLoss: false})
+            toast('Unauthenticated', {toastId: unAuthenticatedToast, pauseOnFocusLoss: false})
             return Promise.reject()
         }
         return Promise.reject(error)

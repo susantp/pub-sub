@@ -7,7 +7,6 @@ use App\Http\Requests\ServiceLoginRequest;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ServiceAuthController extends Controller
@@ -25,12 +24,16 @@ class ServiceAuthController extends Controller
 
         try {
             $user = Auth::user();
-            $success['token'] = $user->createToken(str()->slug(config('app.name')))->plainTextToken;
-            $success['user'] = ['id' => $user->id, 'name' => $user->name, 'email' => $user->email];
+            $success['user'] = ['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'email_verified_at' => $user->email_verified_at];
             $success['message'] = 'Login Successfully';
             return response()->ok($success);
         } catch (Exception $exception) {
             return response()->fail($exception->getMessage());
         }
+    }
+
+    public function logout(): null
+    {
+        return null;
     }
 }

@@ -8,11 +8,15 @@ import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
 import Home from "../pages";
+import dashboard from "../pages/dashboard";
 
 const AuthContext = createContext({
-    user: null, login: () => {
-    }, logout: () => {
-    }, authReady: false
+    user: {}, login: () => {
+    },
+    logout: () => {
+    },
+    loading: false,
+    isAuthenticated: false
 })
 
 export const AuthContextProvider = ({children}) => {
@@ -22,20 +26,32 @@ export const AuthContextProvider = ({children}) => {
     const router = useRouter()
     const loginToast = 'login'
 
+    const csrfCookieUrl = `${config.hostApiUrl}/csrf-cookie`
+    const loginUrl = `${config.hostAuthUrl}/consumer/login`
+    const logoutUrl = `${config.hostAuthUrl}/consumer/logout`
+    const dashboardPath = '/dashboard'
+
     useEffect(() => {
         async function loadUserFromCookies() {
-            await apiService().get(`/user`)
-                .then(({data}) => {
-                    if (!data[0].error) {
-                        const {user} = data[1].data
-                        console.log('on useEffect ', user)
-                        setUser(user)
-                        router.pathname === '/' && router.push('/dashboard')
-                    }
-                })
-                .catch(error => {
-                    console.log('error', error)
-                })
+            const userFromLocalStorage = JSON.parse(localStorage.getItem('user'))
+            if (!userFromLocalStorage) {
+                await apiService().get(`/user`)
+                    .then(({data}) => {
+                        if (!data[0].error) {
+                            const {user} = data[1].data
+                            setUser(user)
+                            localStorage.setItem('user', JSON.stringify(user))
+                            router.pathname === '/' && router.push(dashboardPath)
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error)
+                    })
+            } else {
+                console.log('json parse ', userFromLocalStorage)
+                setUser(userFromLocalStorage)
+            }
+
             setLoading(false)
         }
 
@@ -43,14 +59,14 @@ export const AuthContextProvider = ({children}) => {
     }, [])
 
     const login = async (data) => {
-        await axios.get(`${config.hostApiUrl}/csrf-cookie`).then(response => {
-            apiService().post(`${config.hostAuthUrl}/consumer/login`, data)
+        await axios.get(csrfCookieUrl).then(() => {
+            apiService().post(loginUrl, data)
                 .then(({data}) => {
                     if (!data[0].error) {
-                        const {token, user} = data[1].data
-                        Cookies.set('token', token, {expires: 86400, sameSite: 'lax'})
+                        const {user} = data[1].data
+                        localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
-                        router.push('/dashboard')
+                        router.push(dashboardPath)
                         toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
                     }
                 })
@@ -71,15 +87,16 @@ export const AuthContextProvider = ({children}) => {
          * **/
     }
     const logout = () => {
-        apiService().get(`/auth/logout`).then(({data}) => {
+        apiService().get(logoutUrl).then(({data}) => {
             if (!data[1].error) {
                 setUser(null)
                 window.location.pathname = '/'
+                localStorage.removeItem('user')
             }
         })
 
     }
-    const context = {user, login, logout, isAuthenticated: !!user, loading}
+    const context = {logout, login, user, isAuthenticated: !!user, loading}
     return (
         <AuthContext.Provider value={context}>
             {children}
@@ -90,16 +107,14 @@ export const AuthContextProvider = ({children}) => {
 export default AuthContext
 
 export const ProtectRoute = ({children}) => {
-    const {user, isAuthenticated, loading} = useContext(AuthContext);
+    const {isAuthenticated, loading} = useContext(AuthContext);
     const router = useRouter()
-    /*    if (loading || (!isAuthenticated && window.location.pathname !== '/')) {
-            return <div className={`container mx-auto`}>
-                <Skeleton height={40} count={5}/>
-            </div>
-        }*/
-    if (!isAuthenticated && router.pathname !== '/') {
-        return <Home/>
+    if (loading || (!isAuthenticated && router.pathname !== '/')) {
+        return <div className={`container mx-auto`}>
+            <Skeleton height={40} count={5}/>
+        </div>
     }
+
 
     return children;
 };

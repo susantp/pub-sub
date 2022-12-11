@@ -27,8 +27,7 @@ class ConsumerAuthController extends Controller
         try {
             $request->session()->regenerate();
             $user = Auth::user();
-            $success['token'] = $user->createToken(str()->slug(config('app.name')))->plainTextToken;
-            $success['user'] = ['id' => $user->id, 'name' => $user->name, 'email' => $user->email];
+            $success['user'] = ['name' => $user->name, 'email' => $user->email, 'email_verified_at' => $user->email_verified_at];
             $success['message'] = 'Login Successfully';
             return response()->ok($success);
         } catch (Exception $exception) {
