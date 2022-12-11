@@ -17,6 +17,7 @@ class ConsumerAuthController extends Controller
 
     public function login(ConsumerLoginRequest $request)
     {
+        return response()->ok($request->all(), 200);
         if (!Auth::attempt($request->only('email', 'password'))) {
             return response()->fail('Invalid credentials', SymfonyResponse::HTTP_UNAUTHORIZED);
         }
