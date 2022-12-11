@@ -29,7 +29,7 @@ class ResponseMacroServiceProvider extends ServiceProvider
                     ['errors' => true],
                     ['message' => $data],
                 ],
-                $statusCode
+                $statusCode ?? 500
             )
                 ->header('Content-Type', 'application/json');
         });

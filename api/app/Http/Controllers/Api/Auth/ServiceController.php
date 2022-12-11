@@ -4,16 +4,25 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceLoginRequest;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-class ServiceAuthController extends Controller
+class ServiceController extends Controller
 {
     public function register(Request $request)
     {
-        return response()->ok($request->all());
+        $userObject = $request->validate([
+            'email' => ['email', 'required', 'unique:users'],
+            'password' => ['required', 'min:8'],
+            'username' => ['required', 'unique:users', 'min:8', 'max:16']
+        ]);
+        $user = $this->createUserAction($userObject);
+        return response()->ok(['user' => $user]);
     }
 
     public function login(ServiceLoginRequest $request)
@@ -36,4 +45,17 @@ class ServiceAuthController extends Controller
     {
         return null;
     }
+
+
+    /***********************make factory and interface for these methods***************************************/
+    public function createUserAction($userObject)
+    {
+        $emailExploded = explode('@', $userObject['email']);
+        $password = Hash::make($emailExploded[0]);
+        $userObject['name'] = $emailExploded[0];
+        $userObject['password'] = $password;
+        $user = User::create($userObject);
+        return $user;
+    }
+    /**************************************************************/
 }

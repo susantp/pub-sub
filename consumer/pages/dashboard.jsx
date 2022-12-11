@@ -1,16 +1,16 @@
 import React, {useContext} from 'react';
-import AuthContext from "../contexts/auth";
+import AuthContext, {ProtectRoute} from "../contexts/auth";
 import HtmlPageHead from "../components/HtmlPageHead";
 
 function Dashboard(props) {
     const {user} = useContext(AuthContext);
 
     return (
-        <>
-            <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={`Consumer Dashboard`}/>
+        <ProtectRoute>
+            <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={`Service Dashboard`}/>
             <div>Hi {user.name}</div>
             <p>{user.email}</p>
-        </>
+        </ProtectRoute>
     );
 }
 

@@ -1,14 +1,22 @@
 <?php
 
-use App\Http\Controllers\Api\Auth\ConsumerAuthController;
-use App\Http\Controllers\Api\Auth\ServiceAuthController;
+
+use App\Http\Controllers\Api\Auth\ConsumerController;
+use App\Http\Controllers\Api\Auth\ServiceController;
 use Illuminate\Support\Facades\Route;
 
-Route::namespace('consumer')->prefix('consumer')->group(function () {
-    Route::post('/login', [ConsumerAuthController::class, 'login']);
-});
+Route::controller(ConsumerController::class)
+    ->prefix('consumer')
+    ->group(function () {
+        Route::post('/login', 'login');
+        Route::post('/register', 'register');
+        Route::post('/logout', 'logout');
+    });
 
-
-Route::namespace('service')->prefix('service')->group(function () {
-    Route::post('/login', [ServiceAuthController::class, 'login']);
-});
+Route::controller(ServiceController::class)
+    ->prefix('service')
+    ->group(function () {
+        Route::post('/login', 'login');
+        Route::post('/register', 'register');
+        Route::post('/logout', 'logout');
+    });

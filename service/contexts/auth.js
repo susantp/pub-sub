@@ -11,22 +11,30 @@ import Home from "../pages";
 import dashboard from "../pages/dashboard";
 
 const AuthContext = createContext({
-    user: {}, login: () => {
+    user: {},
+
+    doRegister: async () => {
     },
-    logout: () => {
+    doLogin: async () => {
+    },
+    doLogout: async () => {
     },
     loading: false,
-    isAuthenticated: false
+    isAuthenticated: false,
+
 })
 
 export const AuthContextProvider = ({children}) => {
     const {publicRuntimeConfig: config} = getConfig()
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState({});
     const [loading, setLoading] = useState(true)
     const router = useRouter()
     const loginToast = 'login'
+    const passwordNotSameErrorToast = 'passwordNotSameError'
+    const registerErrorToast = 'registerError'
 
     const csrfCookieUrl = `${config.hostApiUrl}/csrf-cookie`
+    const registerUrl = `${config.hostAuthUrl}/service/register`
     const loginUrl = `${config.hostAuthUrl}/service/login`
     const logoutUrl = `${config.hostAuthUrl}/service/logout`
     const dashboardPath = '/dashboard'
@@ -48,7 +56,8 @@ export const AuthContextProvider = ({children}) => {
                         console.log('error', error)
                     })
             } else {
-                console.log('json parse ', userFromLocalStorage)
+                router.pathname === '/' && await router.push(dashboardPath)
+                router.pathname === '/register' && await router.push(dashboardPath)
                 setUser(userFromLocalStorage)
             }
 
@@ -57,8 +66,32 @@ export const AuthContextProvider = ({children}) => {
 
         loadUserFromCookies().then(r => console.log('loadUserFromCookies called !!!'))
     }, [])
+    const doRegister = async (data) => {
+        if (data['password'] !== data['confirm_password']) {
+            toast('password must be same', {
+                toastId: passwordNotSameErrorToast,
+                type: "warning"
+            })
+            return false
+        }
+        await apiService().post(registerUrl, data)
+            .then(({data}) => {
+                if (!data[0].error) {
+                    const {user} = data[1].data
+                    console.log('register ', user)
+                    localStorage.setItem('user', JSON.stringify(user))
+                    if (user) setUser(user);
+                    // console.log(user)
+                    router.push(dashboardPath)
+                }
 
-    const login = async (data) => {
+            })
+            .catch(({response}) => {
+                // console.log(response.data[1].message)
+                toast(response.data[1].message, {toastId: registerErrorToast, pauseOnFocusLoss: false})
+            })
+    }
+    const doLogin = async (data) => {
         await axios.get(csrfCookieUrl).then(() => {
             apiService().post(loginUrl, data)
                 .then(({data}) => {
@@ -86,8 +119,8 @@ export const AuthContextProvider = ({children}) => {
          *         }
          * **/
     }
-    const logout = () => {
-        apiService().get(logoutUrl).then(({data}) => {
+    const doLogout = async () => {
+        await apiService().get(logoutUrl).then(({data}) => {
             if (!data[1].error) {
                 setUser(null)
                 window.location.pathname = '/'
@@ -96,14 +129,13 @@ export const AuthContextProvider = ({children}) => {
         })
 
     }
-    const context = {logout, login, user, isAuthenticated: !!user, loading}
+    const context = {doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}
     return (
         <AuthContext.Provider value={context}>
             {children}
         </AuthContext.Provider>
     )
 }
-
 export default AuthContext
 
 export const ProtectRoute = ({children}) => {
@@ -114,7 +146,5 @@ export const ProtectRoute = ({children}) => {
             <Skeleton height={40} count={5}/>
         </div>
     }
-
-
     return children;
 };

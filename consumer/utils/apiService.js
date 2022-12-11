@@ -1,10 +1,11 @@
 import axios from "axios";
-import {logOut} from "./auth";
-import {toast} from "react-toastify";
 import getConfig from 'next/config'
+import {logOut} from "./auth";
 
 export default function apiService(token = '') {
     const {publicRuntimeConfig: config} = getConfig()
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    // const {logout} = useContext(AuthContext);
     const unAuthenticatedToast = 'unAuthenticated'
     const api = axios.create({
         baseURL: config.hostApiUrl,
@@ -14,6 +15,10 @@ export default function apiService(token = '') {
         maxRedirects: 5,
         decompress: true
     })
+    // token.length &&
+    if (token.length)
+        api.defaults.headers.common['Authorization'] = `Bearer ${token}`
+
     // // Request interceptor. Runs before your request reaches the server
     // const onRequest = (config) => {
     //     // If http method is `post | put | delete` and XSRF-TOKEN cookie is
@@ -43,8 +48,9 @@ export default function apiService(token = '') {
     // if response from server get 401 (unauthorized) logout method called to logout in the front end
     api.interceptors.response.use(response => response, error => {
         if (error.response?.status === 401) {
+
             logOut()
-            toast('Unauthenticated', {toastId: unAuthenticatedToast, pauseOnFocusLoss: false})
+            // toast('Unauthenticated', {toastId: unAuthenticatedToast, pauseOnFocusLoss: false})
             return Promise.reject()
         }
         return Promise.reject(error)

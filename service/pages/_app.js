@@ -8,12 +8,13 @@ import {AuthContextProvider, ProtectRoute} from "../contexts/auth";
 function MyApp({Component, pageProps}) {
     return (
         <AuthContextProvider>
-            <ProtectRoute>
-                <PositionContextProvider>
-                    <Component {...pageProps} />
-                    <ToastContainer position={"bottom-right"} theme={`dark`} limit={1}/>
-                </PositionContextProvider>
-            </ProtectRoute>
+            <PositionContextProvider>
+                <Component {...pageProps} />
+                <ToastContainer position={"top-right"}
+                                theme={`dark`}
+                                limit={4} newestOnTop={true}
+                                pauseOnFocusLoss={false}/>
+            </PositionContextProvider>
         </AuthContextProvider>
     )
 

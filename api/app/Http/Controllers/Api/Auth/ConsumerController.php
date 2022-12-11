@@ -4,18 +4,26 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ConsumerLoginRequest;
+use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-class ConsumerAuthController extends Controller
+class ConsumerController extends Controller
 {
-    public function register(ConsumerLoginRequest $request): Response
+    public function register(Request $request): Response
     {
-        return response()->ok($request->all());
+        $userObject = $request->validate([
+            'email' => ['email', 'required', 'unique:users'],
+            'password' => ['required', 'min:8'],
+            'username' => ['required', 'unique:users', 'min:8', 'max:16']
+        ]);
+        $user = $this->createUserAction($userObject);
+        return response()->ok(['user' => $user]);
     }
 
     public function login(Request $request): Response
@@ -34,4 +42,16 @@ class ConsumerAuthController extends Controller
             return response()->fail($exception->getMessage());
         }
     }
+
+    /***********************make factory and interface for these methods***************************************/
+    public function createUserAction($userObject)
+    {
+        $emailExploded = explode('@', $userObject['email']);
+        $password = Hash::make($emailExploded[0]);
+        $userObject['name'] = $emailExploded[0];
+        $userObject['password'] = $password;
+        $user = User::create($userObject);
+        return $user;
+    }
+    /**************************************************************/
 }

@@ -21,10 +21,13 @@ export const logIn = (token) => {
 }
 
 export const logOut = () => {
+    localStorage.removeItem('user')
     if (typeof window !== 'undefined') {
         // remove logged in user's cookie and redirect to login page
         // Cookies.remove('is_admin_logged_in', {expires: 86400, sameSite: 'lax'})
-        Cookies.remove('access_token', {expires: 86400, sameSite: 'lax'})
-        router.push('/').then(r => null)
+        localStorage.removeItem('user')
+        if (!['/register', '/'].includes(router.pathname)) {
+            router.push('/')
+        }
     }
 }
