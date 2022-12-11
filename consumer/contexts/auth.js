@@ -27,9 +27,10 @@ export const AuthContextProvider = ({children}) => {
             await apiService().get(`/user`)
                 .then(({data}) => {
                     if (!data[0].error) {
-                        const {token, user} = data[1].data
-                        setUser(data[1].user)
-                        // router.pathname === '/' && router.back()
+                        const {user} = data[1].data
+                        console.log('on useEffect ', user)
+                        setUser(user)
+                        router.pathname === '/' && router.push('/dashboard')
                     }
                 })
                 .catch(error => {

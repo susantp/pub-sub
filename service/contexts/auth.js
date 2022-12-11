@@ -1,10 +1,9 @@
 import {createContext, useContext, useEffect, useState} from "react";
-import router, {useRouter} from "next/router";
+import {useRouter} from "next/router";
 import apiService from "../utils/apiService";
 import {toast} from "react-toastify";
 import Cookies from 'js-cookie'
 import axios from "axios";
-import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
 import Home from "../pages";
@@ -24,17 +23,18 @@ export const AuthContextProvider = ({children}) => {
 
     useEffect(() => {
         async function loadUserFromCookies() {
-            if (user)
-                await apiService().get(`/user`)
-                    .then(({data}) => {
-                        if (!data[0].error) {
-                            setUser(data[1].user)
-                            // router.pathname === '/' && router.back()
-                        }
-                    })
-                    .catch(error => {
-                        console.log('error', error)
-                    })
+            await apiService().get(`/user`)
+                .then(({data}) => {
+                    if (!data[0].error) {
+                        const {user} = data[1].data
+                        console.log('on useEffect ', user)
+                        setUser(user)
+                        router.pathname === '/' && router.push('/dashboard')
+                    }
+                })
+                .catch(error => {
+                    console.log('error', error)
+                })
             setLoading(false)
         }
 

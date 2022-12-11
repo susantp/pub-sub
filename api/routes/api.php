@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+    return response()->ok(['user'=>$request->user()]);
 });
 Route::get('socket', [PubSubController::class, 'index']);
 Route::post('post-message', [PubSubController::class, 'postMessage']);
