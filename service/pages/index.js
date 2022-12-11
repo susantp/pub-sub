@@ -9,15 +9,15 @@ import {toast} from "react-toastify";
 import HtmlLabel from "../components/HtmlLabel";
 import HtmlInput from "../components/Htmlinput";
 import HtmlPageHead from "../components/HtmlPageHead";
+import PositionContext from "../contexts/position";
 
 export default function Home() {
     const {publicRuntimeConfig: config} = getConfig()
     const [messages, setMessages] = useState([])
     const {register, handleSubmit, watch, formState: {errors}} = useForm();
     const {login} = useContext(AuthContext)
-    const {position, positionError} = useLocation()
+    const {positionError, position} = useContext(PositionContext);
     const onSubmit = async (data) => {
-
         const {email, password} = data
         if (positionError instanceof GeolocationPositionError) {
 
@@ -39,8 +39,7 @@ export default function Home() {
                 console.log(response.data)
             })
             .catch(error => {
-                alert(error?.response?.data[1]?.message)
-                console.log(error?.response?.data[1]?.message)
+                console.log(error)
             })
     }
 

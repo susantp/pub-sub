@@ -2,10 +2,12 @@ import axios from "axios";
 import {logOut} from "./auth";
 import {toast} from "react-toastify";
 import getConfig from 'next/config'
-export default function apiService() {
+
+const callApi = () => {
     const {publicRuntimeConfig: config} = getConfig()
     const unAuthenticatedToast = 'unAuthenticated'
-    const api = axios.create({
+console.log('from api service', config)
+    const axiosCreate = axios.create({
         baseURL: config.hostApiUrl,
         withCredentials: true,
         responseType: 'json',
@@ -39,15 +41,15 @@ export default function apiService() {
     // api.interceptors.request.use(onRequest, null);
 
     // if response from server get 401 (unauthorized) logout method called to logout in the front end
-    api.interceptors.response.use(response => response, error => {
+    axiosCreate.interceptors.response.use(response => response, error => {
         if (error.response?.status === 401) {
             logOut()
-            toast('Unauthenticated', {toastId:unAuthenticatedToast, pauseOnFocusLoss: false})
+            toast('Unauthenticated', {toastId: unAuthenticatedToast, pauseOnFocusLoss: false})
             return Promise.reject()
         }
         return Promise.reject(error)
     })
 
-
-    return api
+    return axiosCreate
 }
+export default callApi

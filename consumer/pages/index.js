@@ -1,14 +1,14 @@
-import {default as axios} from 'axios';
 import Pusher from "pusher-js";
 import React, {useContext, useEffect, useRef, useState} from 'react';
 import {useForm} from "react-hook-form";
 import AuthContext from "../contexts/auth";
 import getConfig from 'next/config'
-import {useLocation} from "../hooks/useLocation";
 import {toast} from "react-toastify";
 import HtmlLabel from "../components/HtmlLabel";
 import HtmlInput from "../components/Htmlinput";
 import HtmlPageHead from "../components/HtmlPageHead";
+import PositionContext from "../contexts/position";
+import callApi from "../utils/apiService";
 
 export default function Home() {
     const {publicRuntimeConfig: config} = getConfig()
@@ -16,9 +16,8 @@ export default function Home() {
     const userRef = useRef()
     const {register, handleSubmit, watch, formState: {errors}} = useForm();
     const {login} = useContext(AuthContext)
-    const {position, positionError} = useLocation()
+    const {positionError, position} = useContext(PositionContext);
     const onSubmit = async (data) => {
-
         const {email, password} = data
         if (positionError instanceof GeolocationPositionError) {
 
@@ -34,14 +33,13 @@ export default function Home() {
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
         login(data)
-        await axios
-            .post(`${config.hostAuthUrl}/consumer/login`, data)
+        await callApi()
+            .post(`/auth/consumer/login`, data)
             .then(response => {
                 console.log(response.data)
             })
             .catch(error => {
-                alert(error?.response?.data[1]?.message)
-                console.log(error?.response?.data[1]?.message)
+                console.log(error)
             })
     }
 

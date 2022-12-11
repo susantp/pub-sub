@@ -6,6 +6,7 @@ import Cookies from 'js-cookie'
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
+import getConfig from "next/config";
 
 const AuthContext = createContext({
     user: null, login: () => {
@@ -14,6 +15,7 @@ const AuthContext = createContext({
 })
 
 export const AuthContextProvider = ({children}) => {
+    const {publicRuntimeConfig: config} = getConfig()
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true)
     const router = useRouter()
@@ -21,16 +23,17 @@ export const AuthContextProvider = ({children}) => {
 
     useEffect(() => {
         async function loadUserFromCookies() {
-            await apiService().get(`/user`)
-                .then(({data}) => {
-                    if (!data[0].error) {
-                        setUser(data[1].user)
-                        // router.pathname === '/' && router.back()
-                    }
-                })
-                .catch(error => {
-                    console.log('error', error)
-                })
+            if (user)
+                await apiService().get(`/user`)
+                    .then(({data}) => {
+                        if (!data[0].error) {
+                            setUser(data[1].user)
+                            // router.pathname === '/' && router.back()
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error)
+                    })
             setLoading(false)
         }
 
@@ -46,7 +49,7 @@ export const AuthContextProvider = ({children}) => {
                         Cookies.set('token', token, {expires: 86400, sameSite: 'lax'})
                         if (user) setUser(user);
                         router.push('/dashboard')
-                        toast(data[1].message,{toastId:loginToast, pauseOnFocusLoss: false})
+                        toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
                     }
                 })
         })

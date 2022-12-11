@@ -1,5 +1,5 @@
 import {createContext, useContext, useEffect, useState} from "react";
-import router, {useRouter} from "next/router";
+import {useRouter} from "next/router";
 import apiService from "../utils/apiService";
 import {toast} from "react-toastify";
 import Cookies from 'js-cookie'
@@ -23,16 +23,17 @@ export const AuthContextProvider = ({children}) => {
 
     useEffect(() => {
         async function loadUserFromCookies() {
-            await apiService().get(`/user`)
-                .then(({data}) => {
-                    if (!data[0].error) {
-                        setUser(data[1].user)
-                        // router.pathname === '/' && router.back()
-                    }
-                })
-                .catch(error => {
-                    console.log('error', error)
-                })
+            if (!user)
+                await apiService().get(`/user`)
+                    .then(({data}) => {
+                        if (!data[0].error) {
+                            setUser(data[1].user)
+                            // router.pathname === '/' && router.back()
+                        }
+                    })
+                    .catch(error => {
+                        console.log('error', error)
+                    })
             setLoading(false)
         }
 
@@ -68,7 +69,7 @@ export const AuthContextProvider = ({children}) => {
          * **/
     }
     const logout = () => {
-        apiService().get(`v1/auth/logout`).then(({data}) => {
+        apiService().get(`/auth/logout`).then(({data}) => {
             if (!data[1].error) {
                 setUser(null)
                 window.location.pathname = '/'
