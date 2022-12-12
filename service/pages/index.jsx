@@ -21,7 +21,7 @@ export default function Login() {
         title: 'Service Login',
         description: '',
         metaContent: 'Login in',
-        homePath: '/layout'
+        homePath: '/home'
     });
     const onLogin = (data) => {
         if (positionError instanceof GeolocationPositionError) {
