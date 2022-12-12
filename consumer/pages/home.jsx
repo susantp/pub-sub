@@ -16,9 +16,14 @@ function Home(props) {
 
         // value && router.push(`query?service=${value}&lat=${latitude}&long=${longitude}`)
     }
+    const pageInfo = {
+        title: 'Home',
+        description: '',
+        metaContent: 'search hundred of services around you'
+    }
     return (
         <ProtectRoute>
-            <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={`Service Dashboard`}/>
+            <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={pageInfo.title}/>
             <div className={`flex justify-center items-center h-screen flex-col  gap-y-16 `}>
                 <div className={`flex justify-center items-center w-full gap-y-2 gap-x-2 `}>
                     <h1 className={`text-2xl lg:text-6xl md:text-4xl  font-semibold text-blue-400 dark:text-white`}>
