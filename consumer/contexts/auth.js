@@ -2,13 +2,10 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import apiService from "../utils/apiService";
 import {toast} from "react-toastify";
-import Cookies from 'js-cookie'
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
-import Home from "../pages";
-import dashboard from "../pages/dashboard";
 
 const AuthContext = createContext({
     user: {},
@@ -37,7 +34,7 @@ export const AuthContextProvider = ({children}) => {
     const registerUrl = `${config.hostAuthUrl}/consumer/register`
     const loginUrl = `${config.hostAuthUrl}/consumer/login`
     const logoutUrl = `${config.hostAuthUrl}/consumer/logout`
-    const dashboardPath = '/dashboard'
+    const homePath = '/home'
 
     useEffect(() => {
         async function loadUserFromCookies() {
@@ -49,15 +46,15 @@ export const AuthContextProvider = ({children}) => {
                             const {user} = data[1].data
                             setUser(user)
                             localStorage.setItem('user', JSON.stringify(user))
-                            router.pathname === '/' && router.push(dashboardPath)
+                            router.pathname === '/' && router.push(homePath)
                         }
                     })
                     .catch(error => {
                         console.log('error', error)
                     })
             } else {
-                router.pathname === '/' && await router.push(dashboardPath)
-                router.pathname === '/register' && await router.push(dashboardPath)
+                router.pathname === '/' && await router.push(homePath)
+                router.pathname === '/register' && await router.push(homePath)
                 setUser(userFromLocalStorage)
             }
 
@@ -82,7 +79,7 @@ export const AuthContextProvider = ({children}) => {
                     localStorage.setItem('user', JSON.stringify(user))
                     if (user) setUser(user);
                     // console.log(user)
-                    router.push(dashboardPath)
+                    router.push(homePath)
                 }
 
             })
@@ -99,7 +96,7 @@ export const AuthContextProvider = ({children}) => {
                         const {user} = data[1].data
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
-                        router.push(dashboardPath)
+                        router.push(homePath)
                         toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
                     }
                 })

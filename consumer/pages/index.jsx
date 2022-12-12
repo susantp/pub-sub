@@ -10,10 +10,9 @@ import HtmlPageHead from "../components/HtmlPageHead";
 import PositionContext from "../contexts/position";
 import {useRouter} from "next/router";
 
-export default function Home() {
+export default function Login() {
     const {publicRuntimeConfig: config} = getConfig()
     const [messages, setMessages] = useState([])
-    const userRef = useRef()
     const {register, handleSubmit, watch, formState: {errors}} = useForm();
     const {doLogin} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
@@ -77,7 +76,7 @@ export default function Home() {
                         </ul>
                     }
                     <h1 className={`px-8 pt-6 pb-8 text-3xl bg-purple-400 text-white dark:bg-blue-500`}>
-                        Service Login
+                        {pageInfo.title}
                     </h1>
                     <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onLogin)}>
 

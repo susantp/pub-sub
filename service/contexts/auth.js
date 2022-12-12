@@ -2,13 +2,10 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {useRouter} from "next/router";
 import apiService from "../utils/apiService";
 import {toast} from "react-toastify";
-import Cookies from 'js-cookie'
 import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
-import Home from "../pages";
-import dashboard from "../pages/dashboard";
 
 const AuthContext = createContext({
     user: {},
