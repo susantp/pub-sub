@@ -94,7 +94,6 @@ export const AuthContextProvider = ({children}) => {
                         const {user} = data[1].data
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
-                        router.push(homePath)
                         toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
                     }
                 })
