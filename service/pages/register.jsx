@@ -18,10 +18,11 @@ function Register(props) {
     const [pageInfo, setPageInfo] = useState({
         title: 'Service Register',
         description: '',
-        metaContent: 'Register your service'
+        metaContent: 'Register your service',
+        homePath: '/home'
     });
 
-    const onRegister = async (data) => {
+    const onRegister = (data) => {
         if (positionError instanceof GeolocationPositionError) {
             toast('For the service please enable location.', {
                 toastId: 'locationDeniedPermissionToast',
@@ -33,7 +34,7 @@ function Register(props) {
         const {coords: {latitude, longitude}} = position
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
-        await doRegister(data)
+        doRegister(data).then(r => router.push(pageInfo.homePath))
     }
     return (
         <>

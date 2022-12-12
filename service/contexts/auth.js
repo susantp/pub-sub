@@ -34,7 +34,7 @@ export const AuthContextProvider = ({children}) => {
     const registerUrl = `${config.hostAuthUrl}/service/register`
     const loginUrl = `${config.hostAuthUrl}/service/login`
     const logoutUrl = `${config.hostAuthUrl}/service/logout`
-    const homePath = '/layout'
+    const homePath = '/home'
 
     useEffect(() => {
         async function loadUserFromCookies() {
@@ -75,11 +75,8 @@ export const AuthContextProvider = ({children}) => {
             .then(({data}) => {
                 if (!data[0].error) {
                     const {user} = data[1].data
-                    console.log('register ', user)
                     localStorage.setItem('user', JSON.stringify(user))
                     if (user) setUser(user);
-                    // console.log(user)
-                    router.push(homePath)
                 }
 
             })
