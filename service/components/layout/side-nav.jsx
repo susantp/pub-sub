@@ -18,15 +18,13 @@ const SideNav = ({handleLinkClick}) => {
             <div className={`flex flex-col gap-y-2 divide-y divide-white`}>
                 {
                     switchers.map(switcher => (
-                        <>
-                            <div
-                                key={switcher.id}
-                                className={linkTextCss}
-                                onClick={(e) => handleSwitcher(e, switcher)}
-                            >
-                                <p>{switcher.label}</p>
-                            </div>
-                        </>
+                        <div
+                            key={switcher.id}
+                            className={linkTextCss}
+                            onClick={(e) => handleSwitcher(e, switcher)}
+                        >
+                            <p>{switcher.label}</p>
+                        </div>
                     ))
                 }
             </div>
