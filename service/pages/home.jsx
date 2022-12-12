@@ -1,6 +1,8 @@
 import React, {useContext, useState} from 'react';
 import AuthContext, {ProtectRoute} from "../contexts/auth";
 import HtmlPageHead from "../components/HtmlPageHead";
+import ProtectedLayout from "../layout/protected-layout";
+import HomeTopbar from "../components/layout/home-topbar";
 
 function Home(props) {
     const {user, doLogout} = useContext(AuthContext);
@@ -17,28 +19,10 @@ function Home(props) {
         console.log(e)
     }
     return (
-        <ProtectRoute>
-            <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={pageInfo.title}/>
-            <div className="justify-center items-center container mx-auto my-2">
-
-                <HomeNavbar info={pageInfo.navBar}
-                            user={user}
-                            classes={`p-6 flex justify-between items-center text-lg bg-blue-500 rounded-lg shadow-lg text-white`}
-                            onLogout={handleLogout}/>
-
-
-            </div>
-        </ProtectRoute>
+        <ProtectedLayout title={pageInfo.title} navBar={pageInfo.navBar} user={user} handleLogout={handleLogout}>
+            <div className={`flex gap-y-2`}>Content</div>
+        </ProtectedLayout>
     );
 }
 
 export default Home;
-const HomeNavbar = ({classes, info, onLogout, user}) => {
-    return (
-        <div id={`homeNavbar`} className={classes}>
-            <div className={`uppercase`}>{info.welcomeText} {user.username}</div>
-            <div className={`px-4 py-2 cursor-pointer hover:bg-blue-900 bg-blue-700 rounded-sm`}
-                 onClick={onLogout}>{info.logoutText}</div>
-        </div>
-    )
-}

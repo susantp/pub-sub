@@ -1,0 +1,12 @@
+import React from "react";
+
+const HomeTopBar = ({classes, info, onLogout, user}) => {
+    return (
+        <div id={`homeNavbar`} className={classes}>
+            <div className={`uppercase`}>{info.welcomeText} {user.username}</div>
+            <div className={`px-4 py-2 cursor-pointer hover:bg-blue-900 bg-blue-700 rounded-sm`}
+                 onClick={onLogout}>{info.logoutText}</div>
+        </div>
+    )
+}
+export default HomeTopBar

@@ -34,7 +34,7 @@ export const AuthContextProvider = ({children}) => {
     const registerUrl = `${config.hostAuthUrl}/service/register`
     const loginUrl = `${config.hostAuthUrl}/service/login`
     const logoutUrl = `${config.hostAuthUrl}/service/logout`
-    const homePath = '/home'
+    const homePath = '/layout'
 
     useEffect(() => {
         async function loadUserFromCookies() {
