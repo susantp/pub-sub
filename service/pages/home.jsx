@@ -5,6 +5,7 @@ import HtmlPageHead from "../components/HtmlPageHead";
 function Home(props) {
     const {user, doLogout} = useContext(AuthContext);
     const [pageInfo, setPageInfo] = useState({
+        title: 'Home',
         navBar: {
             welcomeText: `Welcome `,
             logoutText: `Logout`
@@ -17,7 +18,7 @@ function Home(props) {
     }
     return (
         <ProtectRoute>
-            <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={`Service Dashboard`}/>
+            <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={pageInfo.title}/>
             <div className="justify-center items-center container mx-auto my-2">
 
                 <HomeNavbar info={pageInfo.navBar}
