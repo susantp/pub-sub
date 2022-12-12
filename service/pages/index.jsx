@@ -17,8 +17,13 @@ export default function Login() {
     const {doLogin} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
     const router = useRouter()
-    const onLogin = async (data) => {
-        const {email, password} = data
+    const [pageInfo, setPageInfo] = useState({
+        title: 'Service Login',
+        description: '',
+        metaContent: 'Login in',
+        homePath: '/home'
+    });
+    const onLogin = (data) => {
         if (positionError instanceof GeolocationPositionError) {
 
             toast('For the service please enable location.', {
@@ -32,13 +37,9 @@ export default function Login() {
         const {coords: {latitude, longitude}} = position
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
-        await doLogin(data)
+        doLogin(data).then(r => router.push(pageInfo.homePath))
     }
-    const pageInfo = {
-        title: 'Service Login',
-        description: '',
-        metaContent: 'Login in'
-    }
+
     useEffect(() => {
         const pusher = new Pusher('a1091d9e1a6ed6652372', {
             cluster: 'us3',

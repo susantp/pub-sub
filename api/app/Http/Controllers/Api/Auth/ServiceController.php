@@ -7,6 +7,7 @@ use App\Http\Requests\ServiceLoginRequest;
 use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -14,7 +15,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ServiceController extends Controller
 {
-    public function register(Request $request)
+    public function register(Request $request): Response
     {
         $userObject = $request->validate([
             'email' => ['email', 'required', 'unique:users'],
@@ -25,7 +26,7 @@ class ServiceController extends Controller
         return response()->ok(['user' => $user]);
     }
 
-    public function login(ServiceLoginRequest $request)
+    public function login(ServiceLoginRequest $request): Response
     {
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return response()->fail('Invalid credentials', SymfonyResponse::HTTP_UNAUTHORIZED);
@@ -33,7 +34,13 @@ class ServiceController extends Controller
 
         try {
             $user = Auth::user();
-            $success['user'] = ['id' => $user->id, 'name' => $user->name, 'email' => $user->email, 'email_verified_at' => $user->email_verified_at];
+            $success['user'] = [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'username'=> $user->username,
+                'email_verified_at' => $user->email_verified_at
+            ];
             $success['message'] = 'Login Successfully';
             return response()->ok($success);
         } catch (Exception $exception) {
@@ -41,9 +48,10 @@ class ServiceController extends Controller
         }
     }
 
-    public function logout(): null
+    public function logout(Request $request): Response
     {
-        return null;
+        Auth::logout();
+        return response()->ok(['message'=>'Logout Successfully.']);
     }
 
 

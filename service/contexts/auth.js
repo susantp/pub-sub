@@ -34,7 +34,7 @@ export const AuthContextProvider = ({children}) => {
     const registerUrl = `${config.hostAuthUrl}/service/register`
     const loginUrl = `${config.hostAuthUrl}/service/login`
     const logoutUrl = `${config.hostAuthUrl}/service/logout`
-    const dashboardPath = '/dashboard'
+    const homePath = '/home'
 
     useEffect(() => {
         async function loadUserFromCookies() {
@@ -46,15 +46,15 @@ export const AuthContextProvider = ({children}) => {
                             const {user} = data[1].data
                             setUser(user)
                             localStorage.setItem('user', JSON.stringify(user))
-                            router.pathname === '/' && router.push(dashboardPath)
+                            router.pathname === '/' && router.push(homePath)
                         }
                     })
                     .catch(error => {
                         console.log('error', error)
                     })
             } else {
-                router.pathname === '/' && await router.push(dashboardPath)
-                router.pathname === '/register' && await router.push(dashboardPath)
+                router.pathname === '/' && await router.push(homePath)
+                router.pathname === '/register' && await router.push(homePath)
                 setUser(userFromLocalStorage)
             }
 
@@ -79,7 +79,7 @@ export const AuthContextProvider = ({children}) => {
                     localStorage.setItem('user', JSON.stringify(user))
                     if (user) setUser(user);
                     // console.log(user)
-                    router.push(dashboardPath)
+                    router.push(homePath)
                 }
 
             })
@@ -90,15 +90,19 @@ export const AuthContextProvider = ({children}) => {
     }
     const doLogin = async (data) => {
         await axios.get(csrfCookieUrl).then(() => {
-            apiService().post(loginUrl, data)
+            apiService()
+                .post(loginUrl, data)
                 .then(({data}) => {
                     if (!data[0].error) {
                         const {user} = data[1].data
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
-                        router.push(dashboardPath)
+                        router.push(homePath)
                         toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
                     }
+                })
+                .catch(error => {
+                    console.log(error)
                 })
         })
 
@@ -117,13 +121,17 @@ export const AuthContextProvider = ({children}) => {
          * **/
     }
     const doLogout = async () => {
-        await apiService().get(logoutUrl).then(({data}) => {
-            if (!data[1].error) {
-                setUser(null)
-                window.location.pathname = '/'
-                localStorage.removeItem('user')
-            }
-        })
+        await apiService()
+            .post(logoutUrl)
+            .then(({data}) => {
+                if (!data[1].error) {
+                    setUser(null)
+                    localStorage.removeItem('user')
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
 
     }
     const context = {doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}

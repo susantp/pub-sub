@@ -15,11 +15,11 @@ function Register(props) {
     const {positionError, position} = useContext(PositionContext);
     const {doRegister} = useContext(AuthContext);
     const router = useRouter()
-    const pageInfo = {
+    const [pageInfo, setPageInfo] = useState({
         title: 'Service Register',
         description: '',
         metaContent: 'Register your service'
-    }
+    });
 
     const onRegister = async (data) => {
         if (positionError instanceof GeolocationPositionError) {
