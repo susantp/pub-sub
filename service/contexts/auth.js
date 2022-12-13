@@ -54,8 +54,8 @@ export const AuthContextProvider = ({children}) => {
                         console.log('error', error)
                     })
             } else {
-                router.pathname === loginPage.path && await router.push(homePath)
-                router.pathname === registerPage.path && await router.push(homePath)
+                router.pathname === loginPage.path && await router.push(loginPage.path)
+                router.pathname === registerPage.path && await router.push(loginPage.path)
                 setUser(userFromLocalStorage)
             }
 
