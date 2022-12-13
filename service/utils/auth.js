@@ -17,7 +17,7 @@ export const logIn = (token) => {
     // Cookies.set('is_admin_logged_in', true, {expires: 86400, sameSite: 'lax'})
     Cookies.set('access_token', token, {expires: 86400, sameSite: 'lax'})
 
-    router.push('/layout').then(r => null)
+    router.push('/overview').then(r => null)
 }
 
 export const logOut = () => {

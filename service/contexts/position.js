@@ -25,7 +25,7 @@ export const PositionContextProvider = ({children}) => {
                     })
             }
         }
-        loadLocation().then(r => console.log('locationProvider Called !!!'))
+        loadLocation().then(r => null)
     }, [])
 
     const context = {position, positionError}
