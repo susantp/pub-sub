@@ -14,7 +14,6 @@ function ProtectedLayout({children, title}) {
         router.push(link.path).then(r => null)
     }
     const handleLogout = () => {
-        console.log('here')
         doLogout().then(r => router.push(loginPage.path))
     }
     return (
