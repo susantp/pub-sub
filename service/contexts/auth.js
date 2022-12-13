@@ -6,6 +6,7 @@ import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
+import useSchema from "../hooks/useSchema";
 
 const AuthContext = createContext({
     user: {},
@@ -34,7 +35,7 @@ export const AuthContextProvider = ({children}) => {
     const registerUrl = `${config.hostAuthUrl}/service/register`
     const loginUrl = `${config.hostAuthUrl}/service/login`
     const logoutUrl = `${config.hostAuthUrl}/service/logout`
-    const dashboardPath = '/dashboard'
+    const {loginPage, registerPage} = useSchema()
 
     useEffect(() => {
         async function loadUserFromCookies() {
@@ -46,22 +47,22 @@ export const AuthContextProvider = ({children}) => {
                             const {user} = data[1].data
                             setUser(user)
                             localStorage.setItem('user', JSON.stringify(user))
-                            router.pathname === '/' && router.push(dashboardPath)
+                            router.pathname === loginPage.path && router.push(homePath)
                         }
                     })
                     .catch(error => {
                         console.log('error', error)
                     })
             } else {
-                router.pathname === '/' && await router.push(dashboardPath)
-                router.pathname === '/register' && await router.push(dashboardPath)
+                router.pathname === loginPage.path && await router.push(homePath)
+                router.pathname === registerPage.path && await router.push(homePath)
                 setUser(userFromLocalStorage)
             }
 
             setLoading(false)
         }
 
-        loadUserFromCookies().then(r => console.log('loadUserFromCookies called !!!'))
+        loadUserFromCookies().then(r => null)
     }, [])
     const doRegister = async (data) => {
         if (data['password'] !== data['confirm_password']) {
@@ -75,11 +76,8 @@ export const AuthContextProvider = ({children}) => {
             .then(({data}) => {
                 if (!data[0].error) {
                     const {user} = data[1].data
-                    console.log('register ', user)
                     localStorage.setItem('user', JSON.stringify(user))
                     if (user) setUser(user);
-                    // console.log(user)
-                    router.push(dashboardPath)
                 }
 
             })
@@ -90,15 +88,18 @@ export const AuthContextProvider = ({children}) => {
     }
     const doLogin = async (data) => {
         await axios.get(csrfCookieUrl).then(() => {
-            apiService().post(loginUrl, data)
+            apiService()
+                .post(loginUrl, data)
                 .then(({data}) => {
                     if (!data[0].error) {
                         const {user} = data[1].data
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
-                        router.push(dashboardPath)
                         toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
                     }
+                })
+                .catch(error => {
+                    console.log(error)
                 })
         })
 
@@ -117,13 +118,17 @@ export const AuthContextProvider = ({children}) => {
          * **/
     }
     const doLogout = async () => {
-        await apiService().get(logoutUrl).then(({data}) => {
-            if (!data[1].error) {
-                setUser(null)
-                window.location.pathname = '/'
-                localStorage.removeItem('user')
-            }
-        })
+        await apiService()
+            .post(logoutUrl)
+            .then(({data}) => {
+                if (!data[1].error) {
+                    setUser(null)
+                    localStorage.removeItem('user')
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
 
     }
     const context = {doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}
@@ -136,9 +141,10 @@ export const AuthContextProvider = ({children}) => {
 export default AuthContext
 
 export const ProtectRoute = ({children}) => {
+    const{loginPage} = useSchema()
     const {isAuthenticated, loading} = useContext(AuthContext);
     const router = useRouter()
-    if (loading || (!isAuthenticated && router.pathname !== '/')) {
+    if (loading || (!isAuthenticated && router.pathname !== loginPage.path)) {
         return <div className={`container mx-auto`}>
             <Skeleton height={40} count={5}/>
         </div>

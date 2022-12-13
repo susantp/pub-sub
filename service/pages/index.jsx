@@ -1,5 +1,5 @@
 import Pusher from "pusher-js";
-import React, {useContext, useEffect, useRef, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useForm} from "react-hook-form";
 import AuthContext from "../contexts/auth";
 import getConfig from 'next/config'
@@ -9,6 +9,7 @@ import HtmlInput from "../components/Htmlinput";
 import HtmlPageHead from "../components/HtmlPageHead";
 import PositionContext from "../contexts/position";
 import {useRouter} from "next/router";
+import useSchema from "../hooks/useSchema";
 
 export default function Login() {
     const {publicRuntimeConfig: config} = getConfig()
@@ -17,8 +18,8 @@ export default function Login() {
     const {doLogin} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
     const router = useRouter()
-    const onLogin = async (data) => {
-        const {email, password} = data
+    const {loginPage, pages:{overview}} = useSchema()
+    const onLogin = (data) => {
         if (positionError instanceof GeolocationPositionError) {
 
             toast('For the service please enable location.', {
@@ -32,14 +33,10 @@ export default function Login() {
         const {coords: {latitude, longitude}} = position
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
-        await doLogin(data)
+        doLogin(data).then(r => router.push(overview.path))
     }
-    const pageInfo = {
-        title: 'Service Login',
-        description: '',
-        metaContent: 'Login in'
-    }
-    useEffect(() => {
+
+/*    useEffect(() => {
         const pusher = new Pusher('a1091d9e1a6ed6652372', {
             cluster: 'us3',
             encrypted: true
@@ -47,22 +44,21 @@ export default function Login() {
         const channel = pusher.subscribe('public.room');
 
         channel.bind('message.new', (data) => {
-            console.log(data)
             setMessages(oldMessages => [...oldMessages, data])
         })
         return () => {
             pusher.unsubscribe('public.room')
         }
-    }, []);
+    }, []);*/
 
     return (
         <>
             <HtmlPageHead
-                title={pageInfo.title}
-                metaName={pageInfo.description}
+                title={loginPage.title}
+                metaName={loginPage.description}
                 linkHref={`/favicon.ico`}
                 linkRel={`icon`}
-                metaContent={pageInfo.metaContent}
+                metaContent={loginPage.metaContent}
             />
             <div className={`flex justify-center items-center w-full h-screen bg-slate-200`}>
 
@@ -76,7 +72,7 @@ export default function Login() {
                         </ul>
                     }
                     <h1 className={`px-8 pt-6 pb-8 text-3xl bg-purple-400 text-white dark:bg-blue-500`}>
-                        {pageInfo.title}
+                        {loginPage.title}
                     </h1>
                     <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onLogin)}>
 

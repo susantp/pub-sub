@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import HtmlPageHead from "../components/HtmlPageHead";
 import HtmlLabel from "../components/HtmlLabel";
 import HtmlInput from "../components/Htmlinput";
@@ -15,13 +15,14 @@ function Register(props) {
     const {positionError, position} = useContext(PositionContext);
     const {doRegister} = useContext(AuthContext);
     const router = useRouter()
-    const pageInfo = {
+    const [pageInfo, setPageInfo] = useState({
         title: 'Service Register',
         description: '',
-        metaContent: 'Register your service'
-    }
+        metaContent: 'Register your service',
+        homePath: '/home'
+    });
 
-    const onRegister = async (data) => {
+    const onRegister = (data) => {
         if (positionError instanceof GeolocationPositionError) {
             toast('For the service please enable location.', {
                 toastId: 'locationDeniedPermissionToast',
@@ -33,7 +34,7 @@ function Register(props) {
         const {coords: {latitude, longitude}} = position
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
-        await doRegister(data)
+        doRegister(data).then(r => router.push(pageInfo.homePath))
     }
     return (
         <>
