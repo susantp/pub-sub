@@ -11,6 +11,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use MatanYadaev\EloquentSpatial\Objects\Point;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ServiceController extends Controller
@@ -28,18 +29,28 @@ class ServiceController extends Controller
 
     public function login(ServiceLoginRequest $request): Response
     {
+//        return response()->ok($request->all());
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return response()->fail('Invalid credentials', SymfonyResponse::HTTP_UNAUTHORIZED);
         }
-
+        if ($coords = $request->input('coords')) {
+            try {
+                $user = User::find(Auth::user()->id);
+                $user->current_location = new Point((float)$coords['latitude'], (float)$coords['longitude']);
+                $user->save();
+            } catch (Exception $exception) {
+                Log::debug($exception->getMessage());
+            }
+        }
         try {
             $user = Auth::user();
             $success['user'] = [
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
-                'username'=> $user->username,
-                'email_verified_at' => $user->email_verified_at
+                'username' => $user->username,
+                'email_verified_at' => $user->email_verified_at,
+                'current_location' => $user->current_location
             ];
             $success['message'] = 'Login Successfully';
             return response()->ok($success);
@@ -51,7 +62,7 @@ class ServiceController extends Controller
     public function logout(Request $request): Response
     {
         Auth::logout();
-        return response()->ok(['message'=>'Logout Successfully.']);
+        return response()->ok(['message' => 'Logout Successfully.']);
     }
 
 

@@ -12,6 +12,7 @@
     "guzzlehttp/guzzle": "^7.2",
     "laravel/framework": "^9.19",
     "laravel/sanctum": "^3.0",
+    "matanyadaev/laravel-eloquent-spatial": "^2.8",
     "pusher/pusher-php-server": "^7.2"
   },
   "require-dev": {

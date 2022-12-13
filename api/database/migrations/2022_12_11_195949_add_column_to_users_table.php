@@ -14,6 +14,7 @@ return new class () extends Migration {
     {
         Schema::table('users', function (Blueprint $table) {
             $table->string('username', 16)->after('email');
+            $table->point('current_location')->nullable();
             $table->unique('username');
         });
     }

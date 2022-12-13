@@ -6,8 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Carbon;
 use Laravel\Sanctum\HasApiTokens;
+use MatanYadaev\EloquentSpatial\Objects\Point;
+use MatanYadaev\EloquentSpatial\SpatialBuilder;
 
 class User extends Authenticatable
 {
@@ -19,6 +20,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime:Y-m-d H:s:i',
         'created_at' => 'datetime:Y-m-d H:s:i',
         'updated_at' => 'datetime:Y-m-d H:s:i',
+        'current_location' => Point::class
     ];
     /**
      * The attributes that are mass assignable.
@@ -29,7 +31,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'username'
+        'username',
+        'current_location'
     ];
 
     /**
@@ -41,4 +44,9 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function newEloquentBuilder($query): SpatialBuilder
+    {
+        return new SpatialBuilder($query);
+    }
 }
