@@ -18,7 +18,7 @@ export default function Login() {
     const {doLogin} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
     const router = useRouter()
-    const {loginPage, overViewPage} = useSchema()
+    const {loginPage, pages:{overview}} = useSchema()
     const onLogin = (data) => {
         if (positionError instanceof GeolocationPositionError) {
 
@@ -33,7 +33,7 @@ export default function Login() {
         const {coords: {latitude, longitude}} = position
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
-        doLogin(data).then(r => router.push(overViewPage.path))
+        doLogin(data).then(r => router.push(overview.path))
     }
 
 /*    useEffect(() => {

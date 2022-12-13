@@ -1,6 +1,10 @@
-import React from "react";
+import React, {useContext} from "react";
+import AuthContext from "../../contexts/auth";
+import {useRouter} from "next/router";
 
 const HomeTopBar = ({classes, info, onLogout, user}) => {
+    const {doLogout} = useContext(AuthContext);
+    const router = useRouter()
     return (
         <div id={`homeNavbar`} className={classes}>
             <div className={`uppercase`}>{info.welcomeText} {user.username}</div>

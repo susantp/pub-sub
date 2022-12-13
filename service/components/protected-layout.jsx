@@ -1,61 +1,43 @@
-import React, {useEffect, useRef, useState} from 'react';
-import {ProtectRoute} from "../contexts/auth";
+import React, {useContext} from 'react';
+import AuthContext, {ProtectRoute} from "../contexts/auth";
 import HtmlPageHead from "./HtmlPageHead";
 import HomeTopBar from "./layout/home-topbar";
 import SideNav from "./layout/side-nav";
-import Content from "./layout/content";
 import {useRouter} from "next/router";
-import Overview from "../pages/overview";
-import Requests from "../pages/requests";
+import useSchema from "../hooks/useSchema";
 
-function ProtectedLayout({children, title, navBar, user, handleLogout}) {
+function ProtectedLayout({children, title}) {
     const router = useRouter()
-    const linkRef = useRef()
-    const [links, setLinks] = useState([
-        {
-            id: 1,
-            label: 'Overview',
-            key: 'overview',
-            path: '/overview',
-            classes: 'cursor-pointer rounded-sm hover:bg-blue-400 p-2 hover:text-white ',
-            activeClasses: 'bg-blue-400 text-white',
-            ref: linkRef,
-            component: <Overview></Overview>
-        },
-        {
-            id: 2,
-            label: 'Requests',
-            key: 'requests',
-            path: '/requests',
-            classes: 'cursor-pointer rounded-sm hover:bg-blue-400 p-2 hover:text-white ',
-            activeClasses: 'bg-blue-400 text-white',
-            ref: linkRef,
-            component: <Requests></Requests>
-        },
-    ])
+    const {pages, topBarComponent, loginPage} = useSchema()
+    const {doLogout, user} = useContext(AuthContext);
     const handleLinkClick = (e, link) => {
-        router.push(link.path)
+        router.push(link.path).then(r => null)
     }
-
+    const handleLogout = () => {
+        console.log('here')
+        doLogout().then(r => router.push(loginPage.path))
+    }
     return (
         <ProtectRoute>
             <div className="justify-center items-center container mx-auto my-2 space-2">
                 <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={title}/>
-                <HomeTopBar info={navBar}
+                <HomeTopBar info={topBarComponent}
                             user={user}
+                            onLogout={handleLogout}
                             classes={`p-6 flex justify-between items-center text-lg bg-blue-500 rounded-lg shadow-lg text-white`}
-                            onLogout={handleLogout}/>
+                />
 
                 <div className={`my-2`}></div>
 
                 <div className={`grid grid-cols-12 h-screen gap-x-2`}>
                     <SideNav onLinkClick={handleLinkClick}
-                             links={links}
+                             links={pages}
                              currentPath={router.pathname}
                     />
-                    <Content>
+
+                    <div className={`col-span-10 p-2 rounded-lg text-lg`}>
                         {children}
-                    </Content>
+                    </div>
                 </div>
 
             </div>

@@ -35,7 +35,7 @@ export const AuthContextProvider = ({children}) => {
     const registerUrl = `${config.hostAuthUrl}/service/register`
     const loginUrl = `${config.hostAuthUrl}/service/login`
     const logoutUrl = `${config.hostAuthUrl}/service/logout`
-    const {loginPage, registerPage} = useSchema();
+    const {loginPage, registerPage} = useSchema()
 
     useEffect(() => {
         async function loadUserFromCookies() {
