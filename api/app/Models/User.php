@@ -3,13 +3,16 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Casts\GeoJSONFeatureSinglePoint;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\SpatialBuilder;
 
+/**
+ * @method static SpatialBuilder query()
+ */
 class User extends Authenticatable
 {
     use HasApiTokens;
@@ -20,7 +23,9 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime:Y-m-d H:s:i',
         'created_at' => 'datetime:Y-m-d H:s:i',
         'updated_at' => 'datetime:Y-m-d H:s:i',
-        'current_location' => Point::class
+        'longitude' => 'float',
+        'latitude' => 'float',
+        'latitude_single_feature' => GeoJSONFeatureSinglePoint::class
     ];
     /**
      * The attributes that are mass assignable.
@@ -49,4 +54,5 @@ class User extends Authenticatable
     {
         return new SpatialBuilder($query);
     }
+
 }
