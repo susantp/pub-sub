@@ -25,9 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        DB::listen(function ($query) {
-            Log::debug("[sql] [query] " . $query->sql);
-            Log::debug("[sql] [bindings] " . print_r($query->bindings, true));
-        });
+//        DB::listen(function ($query) {
+//            Log::debug("[sql] [query] " . $query->sql);
+//            Log::debug("[sql] [bindings] " . print_r($query->bindings, true));
+//        });
     }
 }

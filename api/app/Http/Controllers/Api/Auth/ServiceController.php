@@ -37,17 +37,10 @@ class ServiceController extends Controller
         if ($coords = $request->input('coords')) {
             try {
                 $user = User::find(Auth::user()->id);
-                $user->current_location = new Point((float)$coords['latitude'], (float)$coords['longitude']);
+                $user->latitude = $coords['latitude'];
+                $user->longitude = $coords['longitude'];
                 $user->save();
 
-                $distance = User::query()->whereDistance(
-                    "current_location",
-                    new Point(
-                        (float)$coords['latitude'], (float)$coords['longitude']
-                    ),
-                    "<",
-                    10
-                );
             } catch (Exception $exception) {
                 Log::debug($exception->getMessage());
             }
@@ -60,7 +53,7 @@ class ServiceController extends Controller
             'username' => $user->username,
             'email_verified_at' => $user->email_verified_at,
             'current_location' => $user->current_location,
-            'distance' => $distance
+            'latitude_single_feature' => $user->latitude_single_feature
         ];
         $success['message'] = 'Login Successfully';
         return response()->ok($success);
