@@ -28,7 +28,7 @@ function ProtectedLayout({children, title}) {
 
                 <div className={`my-2`}></div>
 
-                <div className={`grid grid-cols-12 h-screen gap-x-2`}>
+                <div className={`grid grid-cols-12 gap-x-2`}>
                     <SideNav onLinkClick={handleLinkClick}
                              links={pages}
                              currentPath={router.pathname}

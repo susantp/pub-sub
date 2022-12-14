@@ -1,4 +1,7 @@
 import '../styles/globals.css'
+import 'ol/ol.css';
+// import '../styles/myMap.css';
+
 import 'react-toastify/dist/ReactToastify.css';
 import {ToastContainer} from "react-toastify";
 import React from "react";
