@@ -7,6 +7,7 @@ use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Throwable;
 
@@ -59,7 +60,13 @@ class Handler extends ExceptionHandler
             if ($e instanceof AuthenticationException) {
                 return response()->fail($e->getMessage(), Response::HTTP_UNAUTHORIZED);
             }
-            return response()->fail($e->getMessage());
+            if ($e instanceof NotFoundHttpException) {
+                return response()->fail($e->getMessage(), Response::HTTP_NOT_FOUND);
+            }
+            if ($e instanceof \HttpException) {
+                return response()->fail($e->getMessage(), Response::HTTP_NOT_FOUND);
+            }
+            return response()->fail(class_basename($e) . 'Uncatched Error:  ' . $e->getMessage() . ' ' . $e->getCode());
         });
     }
 }

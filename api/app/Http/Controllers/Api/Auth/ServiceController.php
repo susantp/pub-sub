@@ -4,77 +4,53 @@ namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceLoginRequest;
-use App\Models\User;
-use Exception;
+use App\Repositories\UserRepository;
+use App\UserType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
-use MatanYadaev\EloquentSpatial\Objects\Point;
+use Illuminate\Validation\Rules\Enum;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ServiceController extends Controller
 {
+    public function __construct(protected UserRepository $userRepository)
+    {
+    }
+
     public function register(Request $request): Response
     {
         $userObject = $request->validate([
             'email' => ['email', 'required', 'unique:users'],
             'password' => ['required', 'min:8'],
-            'username' => ['required', 'unique:users', 'min:8', 'max:16']
+            'username' => ['required', 'unique:users', 'min:8', 'max:16'],
+            'type' => ['required', new Enum(UserType::class)]
         ]);
-        $user = $this->createUserAction($userObject);
-        return response()->ok(['user' => $user]);
+        $this->userRepository->createUser($userObject);
+        if (!$this->userRepository->userCollection) {
+            return $this->userRepository->getError();
+        }
+        return response()->ok($this->userRepository->userCollection);
     }
 
     public function login(ServiceLoginRequest $request): Response
     {
-//        return response()->ok($request->all());
-        $distance = null;
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return response()->fail('Invalid credentials', SymfonyResponse::HTTP_UNAUTHORIZED);
         }
-        if ($coords = $request->input('coords')) {
-            try {
-                $user = User::find(Auth::user()->id);
-                $user->latitude = $coords['latitude'];
-                $user->longitude = $coords['longitude'];
-                $user->save();
-
-            } catch (Exception $exception) {
-                Log::debug($exception->getMessage());
-            }
+        $this->userRepository->findById(Auth::user()->id);
+        $user = $this->userRepository->userCollection;
+        $this->userRepository->updatePosition($user, $request->input('coords'));
+        if (!$this->userRepository->userCollection) {
+            return $this->userRepository->getError();
         }
-        $user = Auth::user();
-        $success['user'] = [
-            'id' => $user->id,
-            'name' => $user->name,
-            'email' => $user->email,
-            'username' => $user->username,
-            'email_verified_at' => $user->email_verified_at,
-            'current_location' => $user->current_location,
-            'latitude_single_feature' => $user->latitude_single_feature
-        ];
-        $success['message'] = 'Login Successfully';
+        $success['user'] = $this->userRepository->userCollection;
         return response()->ok($success);
     }
 
     public function logout(Request $request): Response
     {
         Auth::logout();
-        return response()->ok(['message' => 'Logout Successfully.']);
+        return response()->ok('Logout Successfully.');
     }
-
-
-    /***********************make factory and interface for these methods***************************************/
-    public function createUserAction($userObject)
-    {
-        $emailExploded = explode('@', $userObject['email']);
-        $password = Hash::make($emailExploded[0]);
-        $userObject['name'] = $emailExploded[0];
-        $userObject['password'] = $password;
-        $user = User::create($userObject);
-        return $user;
-    }
-    /**************************************************************/
 }
