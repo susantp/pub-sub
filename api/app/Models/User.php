@@ -4,7 +4,10 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Casts\GeoJSONFeatureSinglePoint;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -18,7 +21,9 @@ class User extends Authenticatable
     use HasApiTokens;
     use HasFactory;
     use Notifiable;
+    use HasUuids;
 
+    protected $with = ['position'];
     protected $casts = [
         'email_verified_at' => 'datetime:Y-m-d H:s:i',
         'created_at' => 'datetime:Y-m-d H:s:i',
@@ -37,7 +42,6 @@ class User extends Authenticatable
         'email',
         'password',
         'username',
-        'current_location'
     ];
 
     /**
@@ -55,4 +59,10 @@ class User extends Authenticatable
         return new SpatialBuilder($query);
     }
 
+    public function position(): HasMany
+    {
+        return $this
+            ->hasMany(Position::class)
+            ->orderBy('created_at', 'desc');
+    }
 }

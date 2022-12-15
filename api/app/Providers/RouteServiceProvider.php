@@ -33,13 +33,12 @@ class RouteServiceProvider extends ServiceProvider
                 ->prefix('api')
                 ->group(base_path('routes/api.php'));
 
-            Route::middleware('api')
-                ->prefix('api/auth')
-                ->group(base_path('routes/auth.php'));
-
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+            $this->mapConsumerRoutes();
+            $this->mapServiceRoutes();
         });
+
     }
 
     /**
@@ -47,10 +46,24 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function configureRateLimiting()
+    protected function configureRateLimiting(): void
     {
         RateLimiter::for('api', function (Request $request) {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+    }
+
+    protected function mapServiceRoutes()
+    {
+        Route::middleware('api')
+            ->prefix('api/auth/service')
+            ->group(base_path('routes/service/auth.php'));
+    }
+
+    protected function mapConsumerRoutes()
+    {
+        Route::middleware('api')
+            ->prefix('api/auth/consumer')
+            ->group(base_path('routes/consumer/auth.php'));
     }
 }

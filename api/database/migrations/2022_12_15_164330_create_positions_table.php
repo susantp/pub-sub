@@ -12,11 +12,12 @@ return new class () extends Migration {
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('username', 16)->after('email');
+        Schema::create('positions', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('user_id')->nullable()->references('id')->on('users');
             $table->decimal('latitude', 11, 8)->nullable();
             $table->decimal('longitude', 11, 8)->nullable();
-            $table->unique('username');
+            $table->timestamps();
         });
     }
 
@@ -27,8 +28,6 @@ return new class () extends Migration {
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('positions');
     }
 };

@@ -13,7 +13,8 @@
     "laravel/framework": "^9.19",
     "laravel/sanctum": "^3.0",
     "matanyadaev/laravel-eloquent-spatial": "^2.8",
-    "pusher/pusher-php-server": "^7.2"
+    "pusher/pusher-php-server": "^7.2",
+    "spatie/laravel-data": "^2.1"
   },
   "require-dev": {
     "fakerphp/faker": "^1.9.1",
