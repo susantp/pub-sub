@@ -23,6 +23,7 @@ class User extends Authenticatable
     use Notifiable;
     use HasUuids;
 
+    protected $with = ['position'];
     protected $casts = [
         'email_verified_at' => 'datetime:Y-m-d H:s:i',
         'created_at' => 'datetime:Y-m-d H:s:i',
