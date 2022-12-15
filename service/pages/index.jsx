@@ -18,7 +18,7 @@ export default function Login() {
     const {doLogin} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
     const router = useRouter()
-    const {loginPage, pages:{overview}} = useSchema()
+    const {loginPage, pages: {overview}} = useSchema()
     const onLogin = (data) => {
         if (positionError instanceof GeolocationPositionError) {
 
@@ -33,23 +33,23 @@ export default function Login() {
         const {coords: {latitude, longitude}} = position
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
-        doLogin(data).then(r => null).catch(error => console.log(error))
+        doLogin(data, overview.path).then(r => null)
     }
 
-/*    useEffect(() => {
-        const pusher = new Pusher('a1091d9e1a6ed6652372', {
-            cluster: 'us3',
-            encrypted: true
-        })
-        const channel = pusher.subscribe('public.room');
+    /*    useEffect(() => {
+            const pusher = new Pusher('a1091d9e1a6ed6652372', {
+                cluster: 'us3',
+                encrypted: true
+            })
+            const channel = pusher.subscribe('public.room');
 
-        channel.bind('message.new', (data) => {
-            setMessages(oldMessages => [...oldMessages, data])
-        })
-        return () => {
-            pusher.unsubscribe('public.room')
-        }
-    }, []);*/
+            channel.bind('message.new', (data) => {
+                setMessages(oldMessages => [...oldMessages, data])
+            })
+            return () => {
+                pusher.unsubscribe('public.room')
+            }
+        }, []);*/
 
     return (
         <>

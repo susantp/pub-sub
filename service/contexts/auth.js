@@ -43,18 +43,18 @@ export const AuthContextProvider = ({children}) => {
             const userExists = JSON.parse(localStorage.getItem('user'))
             if (userExists) {
                 [loginPage.path, registerPage.path].includes(router.pathname) && await router.push(pages.overview.path)
+            } else {
+                await apiService().get(`/user`)
+                    .then(({data}) => {
+                        if (!data[0].errors) {
+                            const {user} = data[1].data
+                            setUser(user)
+                            localStorage.setItem('user', JSON.stringify(user))
+                        }
+                    }).catch(error => {
+                        ![loginPage.path, registerPage.path].includes(router.pathname) && router.push(loginPage.path)
+                    })
             }
-            await apiService().get(`/user`)
-                .then(({data}) => {
-                    if (!data[0].errors) {
-                        const {user} = data[1].data
-                        setUser(user)
-                        localStorage.setItem('user', JSON.stringify(user))
-                        router.pathname === loginPage.path && router.push(homePath)
-                    }
-                }).catch(error => {
-                    [loginPage.path, registerPage.path].includes(router.pathname) && router.push(pages.overview.path)
-                })
 
             setLoading(false)
         }
@@ -83,7 +83,7 @@ export const AuthContextProvider = ({children}) => {
                 toast(response.data[1].message, {toastId: registerErrorToast, pauseOnFocusLoss: false})
             })
     }
-    const doLogin = async (data) => {
+    const doLogin = async (data, redirectPath) => {
         await axios.get(csrfCookieUrl).then(() => {
             apiService()
                 .post(loginUrl, data)
@@ -93,14 +93,13 @@ export const AuthContextProvider = ({children}) => {
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
                         toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
+                        router.push(redirectPath)
                     } else {
                         console.log('login error')
-                        return false
                     }
                 })
                 .catch(error => {
                     console.log(error)
-                    return false
                 })
         })
 
