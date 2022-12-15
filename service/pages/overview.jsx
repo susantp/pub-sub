@@ -8,7 +8,7 @@ import MyMap from "../components/myMap";
 
 
 function Overview(props) {
-    const {pages:{overview}} = useSchema()
+    const {pages: {overview}} = useSchema()
     const {user} = useContext(AuthContext);
     const mapIsReadyCallback = (map) => {
 
@@ -16,13 +16,11 @@ function Overview(props) {
     return (
         <ProtectedLayout title={overview.title}>
             <h1>Name: {user?.name?.toUpperCase()}</h1>
-            <h3>Current Location: {user?.current_location?.coordinates[0]}, {user?.current_location?.coordinates[1]}</h3>
-            <h3>{user?.latitude_single_feature?.features[0]?.geometry.coordinates[0]}</h3>
-            <h3>{user?.latitude_single_feature?.features[0]?.geometry.coordinates[1]}</h3>
+            <h3>Current Location: {user?.position[0]?.latitude}, {user?.position[0]?.longitude}</h3>
 
             <MyMap
-                latitude={user?.latitude_single_feature?.features[0]?.geometry.coordinates[1]}
-                longitude={user?.latitude_single_feature?.features[0]?.geometry.coordinates[0]}
+                latitude={user?.position[0]?.latitude}
+                longitude={user?.position[0]?.longitude}
                 mapIsReadyCallback={mapIsReadyCallback}
             />
 

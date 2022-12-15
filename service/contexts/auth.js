@@ -41,7 +41,7 @@ export const AuthContextProvider = ({children}) => {
     useEffect(() => {
         async function loadUserFromCookies() {
             const userExists = JSON.parse(localStorage.getItem('user'))
-            if (userExists) {
+            if (userExists && Object.keys(userExists).length) {
                 [loginPage.path, registerPage.path].includes(router.pathname) && await router.push(pages.overview.path)
             } else {
                 await apiService().get(`/user`)
