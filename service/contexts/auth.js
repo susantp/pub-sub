@@ -43,7 +43,6 @@ export const AuthContextProvider = ({children}) => {
             const userExists = JSON.parse(localStorage.getItem('user'))
             if (userExists) {
                 [loginPage.path, registerPage.path].includes(router.pathname) && await router.push(pages.overview.path)
-                return 0
             }
             await apiService().get(`/user`)
                 .then(({data}) => {
@@ -54,8 +53,7 @@ export const AuthContextProvider = ({children}) => {
                         router.pathname === loginPage.path && router.push(homePath)
                     }
                 }).catch(error => {
-                    router.pathname === loginPage.path && router.push(loginPage.path)
-                    router.pathname === registerPage.path && router.push(loginPage.path)
+                    [loginPage.path, registerPage.path].includes(router.pathname) && router.push(pages.overview.path)
                 })
 
             setLoading(false)
@@ -95,12 +93,14 @@ export const AuthContextProvider = ({children}) => {
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
                         toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
-                    }else{
+                    } else {
                         console.log('login error')
+                        return false
                     }
                 })
                 .catch(error => {
                     console.log(error)
+                    return false
                 })
         })
 
