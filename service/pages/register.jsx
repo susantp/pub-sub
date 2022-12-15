@@ -19,7 +19,7 @@ function Register(props) {
         title: 'Service Register',
         description: '',
         metaContent: 'Register your service',
-        homePath: '/home'
+        homePath: '/overview'
     });
 
     const onRegister = (data) => {
@@ -34,6 +34,7 @@ function Register(props) {
         const {coords: {latitude, longitude}} = position
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
+        data['type'] = config.userType
         doRegister(data).then(r => router.push(pageInfo.homePath))
     }
     return (
@@ -65,7 +66,12 @@ function Register(props) {
 
                     <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
                           onSubmit={handleSubmit(onRegister)}>
-
+                        <HtmlInput name={`type`}
+                                   type={`hidden`}
+                                   useFormObject={{...register("type", {required: true})}}
+                                   classes={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
+                                   defaultValue={`abc@abc.com`} placeholder={`abc@abc.com`}
+                        />
                         <div className="mb-4">
                             <HtmlLabel label={`Email`} htmlFor={`email`}
                                        classes={`block text-gray-700 text-sm font-bold mb-2`}

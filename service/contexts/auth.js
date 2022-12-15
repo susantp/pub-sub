@@ -7,6 +7,7 @@ import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
 import useSchema from "../hooks/useSchema";
+import overview from "../pages/overview";
 
 const AuthContext = createContext({
     user: {},
@@ -35,29 +36,27 @@ export const AuthContextProvider = ({children}) => {
     const registerUrl = `${config.hostAuthUrl}/service/register`
     const loginUrl = `${config.hostAuthUrl}/service/login`
     const logoutUrl = `${config.hostAuthUrl}/service/logout`
-    const {loginPage, registerPage} = useSchema()
+    const {loginPage, registerPage, pages} = useSchema()
 
     useEffect(() => {
         async function loadUserFromCookies() {
-            const userFromLocalStorage = JSON.parse(localStorage.getItem('user'))
-            if (!userFromLocalStorage) {
-                await apiService().get(`/user`)
-                    .then(({data}) => {
-                        if (!data[0].error) {
-                            const {user} = data[1].data
-                            setUser(user)
-                            localStorage.setItem('user', JSON.stringify(user))
-                            router.pathname === loginPage.path && router.push(homePath)
-                        }
-                    })
-                    .catch(error => {
-                        console.log('error', error)
-                    })
-            } else {
-                router.pathname === loginPage.path && await router.push(loginPage.path)
-                router.pathname === registerPage.path && await router.push(loginPage.path)
-                setUser(userFromLocalStorage)
+            const userExists = JSON.parse(localStorage.getItem('user'))
+            if (userExists) {
+                [loginPage.path, registerPage.path].includes(router.pathname) && await router.push(pages.overview.path)
+                return 0
             }
+            await apiService().get(`/user`)
+                .then(({data}) => {
+                    if (!data[0].errors) {
+                        const {user} = data[1].data
+                        setUser(user)
+                        localStorage.setItem('user', JSON.stringify(user))
+                        router.pathname === loginPage.path && router.push(homePath)
+                    }
+                }).catch(error => {
+                    router.pathname === loginPage.path && router.push(loginPage.path)
+                    router.pathname === registerPage.path && router.push(loginPage.path)
+                })
 
             setLoading(false)
         }
@@ -74,7 +73,7 @@ export const AuthContextProvider = ({children}) => {
         }
         await apiService().post(registerUrl, data)
             .then(({data}) => {
-                if (!data[0].error) {
+                if (!data[0].errors) {
                     const {user} = data[1].data
                     localStorage.setItem('user', JSON.stringify(user))
                     if (user) setUser(user);
@@ -91,11 +90,13 @@ export const AuthContextProvider = ({children}) => {
             apiService()
                 .post(loginUrl, data)
                 .then(({data}) => {
-                    if (!data[0].error) {
+                    if (!data[0].errors) {
                         const {user} = data[1].data
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
                         toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
+                    }else{
+                        console.log('login error')
                     }
                 })
                 .catch(error => {
@@ -121,7 +122,7 @@ export const AuthContextProvider = ({children}) => {
         await apiService()
             .post(logoutUrl)
             .then(({data}) => {
-                if (!data[1].error) {
+                if (!data[1].errors) {
                     setUser(null)
                     localStorage.removeItem('user')
                 }
@@ -141,7 +142,7 @@ export const AuthContextProvider = ({children}) => {
 export default AuthContext
 
 export const ProtectRoute = ({children}) => {
-    const{loginPage} = useSchema()
+    const {loginPage} = useSchema()
     const {isAuthenticated, loading} = useContext(AuthContext);
     const router = useRouter()
     if (loading || (!isAuthenticated && router.pathname !== loginPage.path)) {

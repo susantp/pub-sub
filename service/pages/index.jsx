@@ -33,7 +33,7 @@ export default function Login() {
         const {coords: {latitude, longitude}} = position
 
         data['coords'] = {"latitude": latitude, "longitude": longitude}
-        doLogin(data).then(r => router.push(overview.path))
+        doLogin(data).then(r => null).catch(error => console.log(error))
     }
 
 /*    useEffect(() => {
