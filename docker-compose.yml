@@ -107,6 +107,8 @@ services:
       - ./api/conf.d/error_reporting.ini:/usr/local/etc/php/conf.d/error_reporting.ini
       - ./api:/var/www/api
     # command: "composer install"
+    environment:
+      PHP_IDE_CONFIG: serverName=gravity
     ports:
       - '9000:9000'
     networks:
