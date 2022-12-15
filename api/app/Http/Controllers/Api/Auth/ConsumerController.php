@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ConsumerLoginRequest;
 use App\Models\User;
+use App\UserType;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Enum;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ConsumerController extends Controller
@@ -20,7 +20,8 @@ class ConsumerController extends Controller
         $userObject = $request->validate([
             'email' => ['email', 'required', 'unique:users'],
             'password' => ['required', 'min:8'],
-            'username' => ['required', 'unique:users', 'min:8', 'max:16']
+            'username' => ['required', 'unique:users', 'min:8', 'max:16'],
+            'type' => ['required', new Enum(UserType::class)]
         ]);
         $user = $this->createUserAction($userObject);
         return response()->ok(['user' => $user]);

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use App\Enums\UserType;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class ConsumerLoginRequest extends FormRequest
 {
@@ -16,7 +18,8 @@ class ConsumerLoginRequest extends FormRequest
         return [
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8'],
-            'coords' => ['array']
+            'coords' => ['array'],
+            'type' => [new Enum(UserType::class)]
         ];
     }
 }

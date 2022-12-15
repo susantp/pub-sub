@@ -18,11 +18,12 @@ RUN apt-get update && apt-get install -y \
             unzip \
             vim \
             supervisor
-RUN pecl install -o -f redis \
-&&  pecl install -o -f xdebug \
+RUN pecl install -o -f xdebug \
+&&  docker-php-ext-enable xdebug \
 &&  rm -rf /tmp/pear \
-&&  docker-php-ext-enable redis \
-&& docker-php-ext-enable xdebug
+&&  pecl install -o -f redis \
+&&  docker-php-ext-enable redis 
+
 
 RUN docker-php-ext-configure pcntl --enable-pcntl \
     && docker-php-ext-install sockets \
@@ -69,3 +70,5 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 WORKDIR /var/www
 
 # RUN composer install
+
+EXPOSE 9000
