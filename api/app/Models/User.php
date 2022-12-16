@@ -59,10 +59,9 @@ class User extends Authenticatable
         return new SpatialBuilder($query);
     }
 
-    public function position(): HasMany
+    public function position(): HasOne
     {
         return $this
-            ->hasMany(Position::class)
-            ->orderBy('created_at', 'desc');
+            ->hasOne(Position::class);
     }
 }
