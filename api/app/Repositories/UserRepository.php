@@ -7,6 +7,8 @@ use App\Models\Position;
 use App\Models\User;
 use App\Traits\HasError;
 use Exception;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
@@ -50,5 +52,24 @@ class UserRepository
             Log::debug($exception->getMessage());
             $this->setError($exception->getMessage(), $exception->getCode());
         }
+    }
+
+    public function getDistance($consumer, $service): Collection
+    {
+        return DB::table('users as a')
+            ->join('users as b', 'a.username', '<>', 'b.username')
+            ->select([
+                'a.username as from_consumer',
+                'b.username as to_service',
+                DB::raw('111.111 *
+    DEGREES(ACOS(LEAST(1.0, COS(RADIANS(a.latitude))
+         * COS(RADIANS(b.latitude))
+         * COS(RADIANS(a.longitude - b.longitude))
+         + SIN(RADIANS(a.latitude))
+         * SIN(RADIANS(b.latitude))))) AS distance_in_km')
+            ])
+            ->where("from_consumer" , '=','whickle') //$consumer->username
+            ->where("to_service" , '=','asa24') //$service->username
+            ->get();
     }
 }
