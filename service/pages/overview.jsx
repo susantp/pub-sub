@@ -20,12 +20,12 @@ function Overview(props) {
             </h1>
             <h3>
                 Current Location:
-                {/*{user?.position[0]?.latitude}, {user?.position[0]?.longitude}*/}
+                {user?.latitude}, {user?.longitude}
             </h3>
 
             <MyMap
-                // latitude={user?.position[0]?.latitude}
-                // longitude={user?.position[0]?.longitude}
+                latitude={user?.latitude}
+                longitude={user?.longitude}
                 mapIsReadyCallback={mapIsReadyCallback}
             />
 
