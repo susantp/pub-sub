@@ -42,7 +42,12 @@ export const AuthContextProvider = ({children}) => {
         async function loadUserFromCookies() {
             const userExists = JSON.parse(localStorage.getItem('user'))
             if (userExists && Object.keys(userExists).length) {
-                [loginPage.path, registerPage.path].includes(router.pathname) && await router.push(pages.overview.path)
+                setUser(userExists)
+                if (
+                    [loginPage.path, registerPage.path].includes(router.pathname)
+                ) {
+                    await router.push(pages.overview.path)
+                }
             } else {
                 await apiService().get(`/user`)
                     .then(({data}) => {
@@ -117,6 +122,7 @@ export const AuthContextProvider = ({children}) => {
          *         }
          * **/
     }
+
     const doLogout = async () => {
         await apiService()
             .post(logoutUrl)
@@ -131,9 +137,9 @@ export const AuthContextProvider = ({children}) => {
             })
 
     }
-    const context = {doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}
+    // const context = {doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}
     return (
-        <AuthContext.Provider value={context}>
+        <AuthContext.Provider value={{doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}}>
             {children}
         </AuthContext.Provider>
     )
