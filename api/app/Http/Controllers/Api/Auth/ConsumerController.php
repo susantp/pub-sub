@@ -21,7 +21,9 @@ class ConsumerController extends Controller
             'email' => ['email', 'required', 'unique:users'],
             'password' => ['required', 'min:8'],
             'username' => ['required', 'unique:users', 'min:8', 'max:16'],
-            'type' => ['required', new Enum(UserType::class)]
+            'type' => ['required', new Enum(UserType::class)],
+            'latitude' => ['required'],
+            'longitude' => ['required']
         ]);
         $user = $this->createUserAction($userObject);
         return response()->ok(['user' => $user]);

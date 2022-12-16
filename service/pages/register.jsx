@@ -33,7 +33,8 @@ function Register(props) {
         }
         const {coords: {latitude, longitude}} = position
 
-        data['coords'] = {"latitude": latitude, "longitude": longitude}
+        data['latitude'] = latitude
+        data['longitude'] = longitude
         data['type'] = config.userType
         doRegister(data).then(r => router.push(pageInfo.homePath))
     }

@@ -18,8 +18,9 @@ class ServiceLoginRequest extends FormRequest
         return [
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8'],
-            'coords' => ['required'],
-            'type' => [new Enum(UserType::class)]
+            'type' => [new Enum(UserType::class)],
+            'latitude' => ['required'],
+            'longitude' => ['required']
         ];
     }
 }

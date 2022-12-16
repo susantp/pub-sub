@@ -24,13 +24,15 @@ class ServiceController extends Controller
             'email' => ['email', 'required', 'unique:users'],
             'password' => ['required', 'min:8'],
             'username' => ['required', 'unique:users', 'min:8', 'max:16'],
-            'type' => ['required', new Enum(UserType::class)]
+            'type' => ['required', new Enum(UserType::class)],
+            'latitude' => ['required'],
+            'longitude' => ['required']
         ]);
         $this->userRepository->createUser($userObject);
         if (!$this->userRepository->userCollection) {
             return $this->userRepository->getError();
         }
-        return response()->ok($this->userRepository->userCollection);
+        return response()->ok(['user' => $this->userRepository->userCollection]);
     }
 
     public function login(ServiceLoginRequest $request): Response
@@ -38,9 +40,7 @@ class ServiceController extends Controller
         if (!Auth::attempt($request->only(['email', 'password']))) {
             return response()->fail('Invalid credentials', SymfonyResponse::HTTP_UNAUTHORIZED);
         }
-        $this->userRepository->findById(Auth::user()->id);
-        $user = $this->userRepository->userCollection;
-        $this->userRepository->updatePosition($user, $request->input('coords'));
+        $this->userRepository->updatePosition(Auth::user(), $request);
         if (!$this->userRepository->userCollection) {
             return $this->userRepository->getError();
         }

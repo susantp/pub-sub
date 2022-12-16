@@ -25,7 +25,9 @@ class UserFactory extends Factory
             'password' => bcrypt('123456789'), // password
             'remember_token' => Str::random(10),
             'type' => UserType::SERVICE,
-            'username' => fake()->userName
+            'username' => fake()->userName,
+            'latitude' => fake()->latitude,
+            'longitude' => fake()->longitude
         ];
     }
 

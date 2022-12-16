@@ -9,15 +9,14 @@ import MyMap from "../components/myMap";
 
 function Overview(props) {
     const {pages: {overview}} = useSchema()
-    const authContext = useContext(AuthContext);
+    const {user} = useContext(AuthContext);
     const mapIsReadyCallback = (map) => {
 
     }
-    const {user} = authContext
     return (
         <ProtectedLayout title={overview.title}>
-            <h1>Name: {user.name}
-                {/*{user?.name?.toUpperCase()}*/}
+            <h1>Name:
+                {user?.name?.toUpperCase()}
             </h1>
             <h3>
                 Current Location:

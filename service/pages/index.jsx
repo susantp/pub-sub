@@ -32,7 +32,8 @@ export default function Login() {
         }
         const {coords: {latitude, longitude}} = position
 
-        data['coords'] = {"latitude": latitude, "longitude": longitude}
+        data['latitude'] = latitude
+        data['longitude'] = longitude
         doLogin(data, overview.path).then(r => null)
     }
 

@@ -66,7 +66,7 @@ class Handler extends ExceptionHandler
             if ($e instanceof \HttpException) {
                 return response()->fail($e->getMessage(), Response::HTTP_NOT_FOUND);
             }
-            return response()->fail(class_basename($e) . 'Uncatched Error:  ' . $e->getMessage() . ' ' . $e->getCode());
+            return response()->fail(class_basename($e) . ' Uncatched Error:  ' . $e->getMessage() . ' ' . $e->getCode(), 500);
         });
     }
 }
