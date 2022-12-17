@@ -36,7 +36,7 @@ function Register(props) {
         data['latitude'] = latitude
         data['longitude'] = longitude
         data['type'] = config.userType
-        doRegister(data).then(r => router.push(pageInfo.homePath))
+        doRegister(data, pageInfo.homePath).then(r => null)
     }
     return (
         <>
@@ -74,12 +74,35 @@ function Register(props) {
                                    defaultValue={`abc@abc.com`} placeholder={`abc@abc.com`}
                         />
                         <div className="mb-4">
+                            <HtmlLabel label={`Company`} htmlFor={`email`}
+                                       classes={`block text-gray-700 text-sm font-bold mb-2`}
+                            />
+                            <HtmlInput name={`company`}
+                                       type={`company`}
+                                       useFormObject={{
+                                           ...register("company", {
+                                               required: true,
+                                               minLength: 8,
+                                               maxLength: 200
+                                           })
+                                       }}
+                                       classes={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
+                                       placeholder={`enter your company name`}
+                            />
+                        </div>
+                        <div className="mb-4">
                             <HtmlLabel label={`Email`} htmlFor={`email`}
                                        classes={`block text-gray-700 text-sm font-bold mb-2`}
                             />
                             <HtmlInput name={`email`}
                                        type={`email`}
-                                       useFormObject={{...register("email", {required: true})}}
+                                       useFormObject={{
+                                           ...register("email", {
+                                               required: true,
+                                               minLength: 8,
+                                               maxLength: 200,
+                                           })
+                                       }}
                                        classes={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline`}
                                        defaultValue={`abc@abc.com`} placeholder={`abc@abc.com`}
                             />

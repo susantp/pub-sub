@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ServiceLoginRequest;
 use App\Repositories\UserRepository;
-use App\UserType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -20,7 +20,9 @@ class ServiceController extends Controller
 
     public function register(Request $request): Response
     {
+        $s = $request->all();
         $userObject = $request->validate([
+            'company' => ['string', 'required', 'min:8', 'max:200'],
             'email' => ['email', 'required', 'unique:users'],
             'password' => ['required', 'min:8'],
             'username' => ['required', 'unique:users', 'min:8', 'max:16'],

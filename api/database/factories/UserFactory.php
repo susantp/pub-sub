@@ -18,17 +18,30 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+        $defaultUser = [
+            'name' => 'demo',
+            'email' => 'abc@abc.com',
             'email_verified_at' => now(),
             'password' => bcrypt('123456789'), // password
             'remember_token' => Str::random(10),
             'type' => UserType::SERVICE,
-            'username' => fake()->userName,
-            'latitude' => fake()->latitude,
-            'longitude' => fake()->longitude
+            'username' => 'demouser',
+            'latitude' => '',
+            'longitude' => '',
+            'company' => 'demo company'
         ];
+        return [
+                'company' => fake()->company,
+                'name' => fake()->name(),
+                'email' => fake()->unique()->safeEmail(),
+                'email_verified_at' => now(),
+                'password' => bcrypt('123456789'), // password
+                'remember_token' => Str::random(10),
+                'type' => UserType::SERVICE,
+                'username' => fake()->userName,
+                'latitude' => fake()->latitude,
+                'longitude' => fake()->longitude
+            ] + $defaultUser;
     }
 
     /**

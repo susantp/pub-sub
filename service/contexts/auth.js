@@ -66,7 +66,7 @@ export const AuthContextProvider = ({children}) => {
 
         loadUserFromCookies().then(r => null)
     }, [])
-    const doRegister = async (data) => {
+    const doRegister = async (data, redirectPath) => {
         if (data['password'] !== data['confirm_password']) {
             toast('password must be same', {
                 toastId: passwordNotSameErrorToast,
@@ -80,12 +80,22 @@ export const AuthContextProvider = ({children}) => {
                     const {user} = data[1].data
                     localStorage.setItem('user', JSON.stringify(user))
                     if (user) setUser(user);
+                    router.push(redirectPath)
                 }
 
             })
             .catch(({response}) => {
-                // console.log(response.data[1].message)
-                toast(response.data[1].message, {toastId: registerErrorToast, pauseOnFocusLoss: false})
+                console.log(response)
+                if(!response?.status >=500){
+                    toast('Registration failed. !!! Please contact support.', {
+                        toastId: registerErrorToast,
+                        pauseOnFocusLoss: false
+                    })
+                }
+                toast(response.data[1].message, {
+                    toastId: registerErrorToast,
+                    pauseOnFocusLoss: false
+                })
             })
     }
     const doLogin = async (data, redirectPath) => {
