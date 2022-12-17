@@ -61,5 +61,4 @@ class User extends Authenticatable
     {
         return new SpatialBuilder($query);
     }
-
 }

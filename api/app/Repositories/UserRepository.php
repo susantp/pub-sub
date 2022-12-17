@@ -18,7 +18,6 @@ class UserRepository
 
     public function __construct(protected User $userModel, public mixed $userCollection = null)
     {
-
     }
 
     public function createUser($userObject): void
@@ -68,8 +67,8 @@ class UserRepository
          + SIN(RADIANS(a.latitude))
          * SIN(RADIANS(b.latitude))))) AS distance_in_km')
             ])
-            ->where("from_consumer" , '=','whickle') //$consumer->username
-            ->where("to_service" , '=','asa24') //$service->username
+            ->where("from_consumer", '=', 'whickle') //$consumer->username
+            ->where("to_service", '=', 'asa24') //$service->username
             ->get();
     }
 }

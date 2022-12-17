@@ -38,7 +38,6 @@ class RouteServiceProvider extends ServiceProvider
             $this->mapConsumerRoutes();
             $this->mapServiceRoutes();
         });
-
     }
 
     /**

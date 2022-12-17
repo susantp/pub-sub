@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
+use App\Enums\UserType;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\UserType;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
