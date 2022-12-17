@@ -107,10 +107,9 @@ export const AuthContextProvider = ({children}) => {
                         const {user} = data[1].data
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
-                        toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
                         router.push(redirectPath)
                     } else {
-                        console.log('login error')
+                        console.log(data[1].message)
                     }
                 })
                 .catch(error => {

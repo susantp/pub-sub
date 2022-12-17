@@ -6,6 +6,7 @@ import axios from "axios";
 import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
+import useSchema from "../hooks/useSchema";
 
 const AuthContext = createContext({
     user: {},
@@ -35,27 +36,29 @@ export const AuthContextProvider = ({children}) => {
     const loginUrl = `${config.hostAuthUrl}/consumer/login`
     const logoutUrl = `${config.hostAuthUrl}/consumer/logout`
     const homePath = '/layout'
+    const {loginPage, registerPage, pages} = useSchema()
 
     useEffect(() => {
         async function loadUserFromCookies() {
-            const userFromLocalStorage = JSON.parse(localStorage.getItem('user'))
-            if (!userFromLocalStorage) {
+            const userExists = JSON.parse(localStorage.getItem('user'))
+            if (userExists && Object.keys(userExists).length) {
+                setUser(userExists)
+                if (
+                    [loginPage.path, registerPage.path].includes(router.pathname)
+                ) {
+                    await router.push(pages.home.path)
+                }
+            } else {
                 await apiService().get(`/user`)
                     .then(({data}) => {
-                        if (!data[0].error) {
+                        if (!data[0].errors) {
                             const {user} = data[1].data
                             setUser(user)
                             localStorage.setItem('user', JSON.stringify(user))
-                            router.pathname === '/' && router.push(homePath)
                         }
+                    }).catch(error => {
+                        ![loginPage.path, registerPage.path].includes(router.pathname) && router.push(loginPage.path)
                     })
-                    .catch(error => {
-                        console.log('error', error)
-                    })
-            } else {
-                router.pathname === '/' && await router.push(homePath)
-                router.pathname === '/register' && await router.push(homePath)
-                setUser(userFromLocalStorage)
             }
 
             setLoading(false)
@@ -63,7 +66,7 @@ export const AuthContextProvider = ({children}) => {
 
         loadUserFromCookies().then(r => console.log('loadUserFromCookies called !!!'))
     }, [])
-    const doRegister = async (data) => {
+    const doRegister = async (data, redirectPath) => {
         if (data['password'] !== data['confirm_password']) {
             toast('password must be same', {
                 toastId: passwordNotSameErrorToast,
@@ -75,20 +78,28 @@ export const AuthContextProvider = ({children}) => {
             .then(({data}) => {
                 if (!data[0].error) {
                     const {user} = data[1].data
-                    console.log('register ', user)
+                    // console.log('register ', user)
                     localStorage.setItem('user', JSON.stringify(user))
                     if (user) setUser(user);
-                    // console.log(user)
-                    router.push(homePath)
+                    router.push(redirectPath)
                 }
 
             })
-            .catch(({response}) => {
-                // console.log(response.data[1].message)
-                toast(response.data[1].message, {toastId: registerErrorToast, pauseOnFocusLoss: false})
+            .catch((error) => {
+                console.log(error)
+                if(error?.response?.status >=500){
+                    toast('Registration failed. !!! Please contact support.', {
+                        toastId: registerErrorToast,
+                        pauseOnFocusLoss: false
+                    })
+                }
+                toast(error?.response?.data[1]?.message, {
+                    toastId: registerErrorToast,
+                    pauseOnFocusLoss: false
+                })
             })
     }
-    const doLogin = async (data) => {
+    const doLogin = async (data, redirectPath) => {
         await axios.get(csrfCookieUrl).then(() => {
             apiService().post(loginUrl, data)
                 .then(({data}) => {
@@ -96,9 +107,13 @@ export const AuthContextProvider = ({children}) => {
                         const {user} = data[1].data
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
-                        router.push(homePath)
-                        toast(data[1].message, {toastId: loginToast, pauseOnFocusLoss: false})
+                        router.push(redirectPath)
+                    }else{
+                        console.log(data[1].message)
                     }
+                })
+                .catch(error => {
+                    console.log(error)
                 })
         })
 

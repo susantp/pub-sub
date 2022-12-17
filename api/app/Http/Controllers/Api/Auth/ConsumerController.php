@@ -18,6 +18,7 @@ class ConsumerController extends Controller
     public function register(Request $request): Response
     {
         $userObject = $request->validate([
+            'consumer' => ['nullable', 'string'],
             'email' => ['email', 'required', 'unique:users'],
             'password' => ['required', 'min:8'],
             'username' => ['required', 'unique:users', 'min:8', 'max:16'],

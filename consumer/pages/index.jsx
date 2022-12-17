@@ -9,6 +9,7 @@ import HtmlInput from "../components/Htmlinput";
 import HtmlPageHead from "../components/HtmlPageHead";
 import PositionContext from "../contexts/position";
 import {useRouter} from "next/router";
+import useSchema from "../hooks/useSchema";
 
 export default function Login() {
     const {publicRuntimeConfig: config} = getConfig()
@@ -17,7 +18,7 @@ export default function Login() {
     const {doLogin} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
     const router = useRouter()
-
+    const {loginPage, pages: {home}} = useSchema()
     const onLogin = async (data) => {
         const {email, password} = data
         if (positionError instanceof GeolocationPositionError) {
@@ -32,8 +33,9 @@ export default function Login() {
         }
         const {coords: {latitude, longitude}} = position
 
-        data['coords'] = {"latitude": latitude, "longitude": longitude}
-        await doLogin(data)
+        data['latitude'] = latitude
+        data['longitude'] = longitude
+        await doLogin(data, home.path)
     }
     useEffect(() => {
         const pusher = new Pusher('a1091d9e1a6ed6652372', {

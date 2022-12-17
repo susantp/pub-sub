@@ -8,6 +8,7 @@ import AuthContext from "../contexts/auth";
 import PositionContext from "../contexts/position";
 import {toast} from "react-toastify";
 import {useRouter} from "next/router";
+import useSchema from "../hooks/useSchema";
 
 function Register(props) {
     const {publicRuntimeConfig: config} = getConfig()
@@ -15,11 +16,7 @@ function Register(props) {
     const {positionError, position} = useContext(PositionContext);
     const {doRegister} = useContext(AuthContext);
     const router = useRouter()
-    const pageInfo = {
-        title: 'Consumer Register',
-        description: '',
-        metaContent: 'Register to get services'
-    }
+   const{registerPage, pages:{home}} = useSchema()
 
     const onRegister = async (data) => {
         if (positionError instanceof GeolocationPositionError) {
@@ -32,17 +29,19 @@ function Register(props) {
         }
         const {coords: {latitude, longitude}} = position
 
-        data['coords'] = {"latitude": latitude, "longitude": longitude}
-        await doRegister(data)
+        data['latitude'] = latitude
+        data['longitude'] = longitude
+        data['type'] = config.userType
+        await doRegister(data, home.path)
     }
     return (
         <>
             <HtmlPageHead
-                title={pageInfo.title}
-                metaName={pageInfo.description}
+                title={registerPage.title}
+                metaName={registerPage.description}
                 linkHref={`/favicon.ico`}
                 linkRel={`icon`}
-                metaContent={pageInfo.metaContent}
+                metaContent={registerPage.metaContent}
             />
             <div className={`flex justify-center items-center w-full h-screen bg-slate-200`}>
 
@@ -60,7 +59,7 @@ function Register(props) {
                             }
                         </ul>
                     }
-                    <h1 className={`px-8 pt-6 pb-8 text-3xl bg-blue-300 text-white dark:bg-blue-500`}>{pageInfo.title}</h1>
+                    <h1 className={`px-8 pt-6 pb-8 text-3xl bg-blue-300 text-white dark:bg-blue-500`}>{registerPage.title}</h1>
 
                     <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
                           onSubmit={handleSubmit(onRegister)}>

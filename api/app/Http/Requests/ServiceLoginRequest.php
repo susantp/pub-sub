@@ -16,7 +16,6 @@ class ServiceLoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'company' => ['required'],
             'email' => ['required', 'email'],
             'password' => ['required', 'min:8'],
             'type' => [new Enum(UserType::class)],
