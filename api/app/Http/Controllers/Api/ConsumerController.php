@@ -23,7 +23,7 @@ class ConsumerController extends Controller
         ]);
         $services = $this
             ->userRepository
-            ->nearByService($validated['latitude'], $validated['longitude'])
+            ->nearByService($validated['latitude'], $validated['longitude'], 10)
             ->paginate(20);
         return response()->ok($services);
     }

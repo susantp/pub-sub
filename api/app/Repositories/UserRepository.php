@@ -72,8 +72,10 @@ class UserRepository
             ->where("b.username", '=', $toUsername);//$service->username
     }
 
-    public function nearByService(float $latitude, float $longitude): EloquentBuilder
+    public function nearByService(float $latitude, float $longitude, int $radius = 10): EloquentBuilder
     {
+        $kiloMeterVar = 6371;
+        $mileVar = 3959;
         return User::select(
             [
                 "id",
@@ -81,7 +83,7 @@ class UserRepository
                 "email",
                 "name",
                 "type",
-                DB::raw("3959 *
+                DB::raw("$kiloMeterVar * 
                 acos(cos(radians($latitude)) *
                     cos(radians(latitude)) *
                     cos(radians(longitude) -
@@ -91,7 +93,7 @@ class UserRepository
              AS distance")
             ]
         )
-            ->having('distance', '<=', 50)
+            ->having('distance', '<=', $radius)
             ->where('type', '=', UserType::SERVICE->value)
             ->orderBy('distance', 'desc');
     }
