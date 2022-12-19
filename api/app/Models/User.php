@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 use MatanYadaev\EloquentSpatial\SpatialBuilder;
 
@@ -57,8 +58,26 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    public function newEloquentBuilder($query): SpatialBuilder
+//    public function newEloquentBuilder($query): SpatialBuilder
+//    {
+//        return new SpatialBuilder($query);
+//    }
+
+    public function scopeCalculateDistance($query, $from_consumer, $to_service)
     {
-        return new SpatialBuilder($query);
+        return $query->table('users as a')
+            ->join('users as b', 'a.username', '<>', 'b.username')
+            ->select([
+                "a.username as from_consumer",
+                "b.username as to_service",
+                DB::raw('111.111 *
+    DEGREES(ACOS(LEAST(1.0, COS(RADIANS(a.latitude))
+         * COS(RADIANS(b.latitude))
+         * COS(RADIANS(a.longitude - b.longitude))
+         + SIN(RADIANS(a.latitude))
+         * SIN(RADIANS(b.latitude))))) AS distance_in_km')
+            ])
+            ->where("from_consumer", '=', $from_consumer) //$consumer->username
+            ->where("to_service", '=', $to_service); //$service->username
     }
 }

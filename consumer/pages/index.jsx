@@ -18,7 +18,7 @@ export default function Login() {
     const {doLogin} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
     const router = useRouter()
-    const {loginPage, pages: {home}} = useSchema()
+    const {loginPage, registerPage, pages: {home}} = useSchema()
     const onLogin = async (data) => {
         const {email, password} = data
         if (positionError instanceof GeolocationPositionError) {
@@ -53,19 +53,15 @@ export default function Login() {
             pusher.unsubscribe('public.room')
         }
     }, []);
-    const pageInfo = {
-        title: 'Consumer Login',
-        description: '',
-        metaContent: 'Login in'
-    }
+
     return (
         <>
             <HtmlPageHead
-                title={pageInfo.title}
-                metaName={pageInfo.description}
+                title={loginPage.title}
+                metaName={loginPage.description}
                 linkHref={`/favicon.ico`}
                 linkRel={`icon`}
-                metaContent={pageInfo.metaContent}
+                metaContent={loginPage.metaContent}
             />
             <div className={`flex justify-center items-center w-full h-screen bg-slate-200`}>
 
@@ -79,7 +75,7 @@ export default function Login() {
                         </ul>
                     }
                     <h1 className={`px-8 pt-6 pb-8 text-3xl bg-purple-400 text-white dark:bg-blue-500`}>
-                        {pageInfo.title}
+                        {loginPage.title}
                     </h1>
                     <form className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4" onSubmit={handleSubmit(onLogin)}>
 
@@ -112,7 +108,7 @@ export default function Login() {
                             />
                             <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
                                href="#"
-                               onClick={() => router.push('/register')}
+                               onClick={() => router.push(registerPage.path)}
                             >
                                 Not Registered ? Click here
                             </a>

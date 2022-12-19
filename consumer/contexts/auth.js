@@ -1,5 +1,4 @@
 import {createContext, useContext, useEffect, useState} from "react";
-import {useRouter} from "next/router";
 import apiService from "../utils/apiService";
 import {toast} from "react-toastify";
 import axios from "axios";
@@ -7,6 +6,7 @@ import Skeleton from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
 import getConfig from "next/config";
 import useSchema from "../hooks/useSchema";
+import {useRouter} from "next/router";
 
 const AuthContext = createContext({
     user: {},
@@ -133,13 +133,14 @@ export const AuthContextProvider = ({children}) => {
          *         }
          * **/
     }
-    const doLogout = async (redirectPath) => {
+    const doLogout = async ({redirectPath}) => {
         await apiService()
             .post(logoutUrl, {type: config.userType})
             .then(({data}) => {
                 if (!data[1].errors) {
                     setUser(null)
                     localStorage.removeItem('user')
+                    router.push(redirectPath)
                 }
             })
             .catch(error => {

@@ -2,12 +2,13 @@
 
 namespace App\Repositories;
 
+use App\Enums\UserType;
 use App\Http\Requests\ServiceLoginRequest;
-use App\Models\Position;
 use App\Models\User;
 use App\Traits\HasError;
 use Exception;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -53,7 +54,7 @@ class UserRepository
         }
     }
 
-    public function getDistance($consumer, $service): Collection
+    public function calculateDistance(string $fromUsername, string $toUsername): QueryBuilder
     {
         return DB::table('users as a')
             ->join('users as b', 'a.username', '<>', 'b.username')
@@ -67,8 +68,31 @@ class UserRepository
          + SIN(RADIANS(a.latitude))
          * SIN(RADIANS(b.latitude))))) AS distance_in_km')
             ])
-            ->where("from_consumer", '=', 'whickle') //$consumer->username
-            ->where("to_service", '=', 'asa24') //$service->username
-            ->get();
+            ->where("a.username", '=', $fromUsername) //$consumer->username
+            ->where("b.username", '=', $toUsername);//$service->username
+    }
+
+    public function nearByService(float $latitude, float $longitude): EloquentBuilder
+    {
+        return User::select(
+            [
+                "id",
+                "username",
+                "email",
+                "name",
+                "type",
+                DB::raw("3959 *
+                acos(cos(radians($latitude)) *
+                    cos(radians(latitude)) *
+                    cos(radians(longitude) -
+                        radians($longitude)) +
+                    sin(radians($latitude)) *
+                    sin(radians(latitude)))
+             AS distance")
+            ]
+        )
+            ->having('distance', '<=', 50)
+            ->where('type', '=', UserType::SERVICE->value)
+            ->orderBy('distance', 'desc');
     }
 }

@@ -20,7 +20,6 @@ class ServiceController extends Controller
 
     public function register(Request $request): Response
     {
-        $s = $request->all();
         $userObject = $request->validate([
             'company' => ['string', 'required', 'min:8', 'max:200'],
             'email' => ['email', 'required', 'unique:users'],
