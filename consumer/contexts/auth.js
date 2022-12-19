@@ -35,7 +35,6 @@ export const AuthContextProvider = ({children}) => {
     const registerUrl = `${config.hostAuthUrl}/consumer/register`
     const loginUrl = `${config.hostAuthUrl}/consumer/login`
     const logoutUrl = `${config.hostAuthUrl}/consumer/logout`
-    const homePath = '/layout'
     const {loginPage, registerPage, pages} = useSchema()
 
     useEffect(() => {
@@ -87,7 +86,7 @@ export const AuthContextProvider = ({children}) => {
             })
             .catch((error) => {
                 console.log(error)
-                if(error?.response?.status >=500){
+                if (error?.response?.status >= 500) {
                     toast('Registration failed. !!! Please contact support.', {
                         toastId: registerErrorToast,
                         pauseOnFocusLoss: false
@@ -108,11 +107,14 @@ export const AuthContextProvider = ({children}) => {
                         localStorage.setItem('user', JSON.stringify(user))
                         if (user) setUser(user);
                         router.push(redirectPath)
-                    }else{
-                        console.log(data[1].message)
+                    } else {
+                        console.log('on error ', data[1].message)
                     }
                 })
                 .catch(error => {
+                    toast(error.response?.data[1].message, {
+                        toastId: 'loginError'
+                    })
                     console.log(error)
                 })
         })
@@ -131,15 +133,18 @@ export const AuthContextProvider = ({children}) => {
          *         }
          * **/
     }
-    const doLogout = async () => {
-        await apiService().get(logoutUrl).then(({data}) => {
-            if (!data[1].error) {
-                setUser(null)
-                window.location.pathname = '/'
-                localStorage.removeItem('user')
-            }
-        })
-
+    const doLogout = async (redirectPath) => {
+        await apiService()
+            .post(logoutUrl, {type: config.userType})
+            .then(({data}) => {
+                if (!data[1].errors) {
+                    setUser(null)
+                    localStorage.removeItem('user')
+                }
+            })
+            .catch(error => {
+                console.log(error)
+            })
     }
     const context = {doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}
     return (

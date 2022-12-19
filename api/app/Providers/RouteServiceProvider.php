@@ -54,14 +54,14 @@ class RouteServiceProvider extends ServiceProvider
 
     protected function mapServiceRoutes()
     {
-        Route::middleware('api')
+        Route::middleware(['api', 'isService'])
             ->prefix('api/auth/service')
             ->group(base_path('routes/service/auth.php'));
     }
 
     protected function mapConsumerRoutes()
     {
-        Route::middleware('api')
+        Route::middleware(['api', 'isConsumer'])
             ->prefix('api/auth/consumer')
             ->group(base_path('routes/consumer/auth.php'));
     }

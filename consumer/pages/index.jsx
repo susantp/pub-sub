@@ -35,6 +35,7 @@ export default function Login() {
 
         data['latitude'] = latitude
         data['longitude'] = longitude
+        data['type'] = config.userType
         await doLogin(data, home.path)
     }
     useEffect(() => {

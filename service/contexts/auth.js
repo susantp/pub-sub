@@ -134,7 +134,7 @@ export const AuthContextProvider = ({children}) => {
 
     const doLogout = async () => {
         await apiService()
-            .post(logoutUrl)
+            .post(logoutUrl, {type: config.userType})
             .then(({data}) => {
                 if (!data[1].errors) {
                     setUser(null)

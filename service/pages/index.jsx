@@ -13,7 +13,6 @@ import useSchema from "../hooks/useSchema";
 
 export default function Login() {
     const {publicRuntimeConfig: config} = getConfig()
-    const [messages, setMessages] = useState([])
     const {register, handleSubmit, watch, formState: {errors}} = useForm();
     const {doLogin} = useContext(AuthContext)
     const {positionError, position} = useContext(PositionContext);
@@ -34,6 +33,7 @@ export default function Login() {
 
         data['latitude'] = latitude
         data['longitude'] = longitude
+        data['type'] = config.userType
         doLogin(data, overview.path).then(r => null)
     }
 
