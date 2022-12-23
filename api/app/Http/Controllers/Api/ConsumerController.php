@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\Consumer\SearchEvent;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
 
 class ConsumerController extends Controller
 {
@@ -23,9 +25,11 @@ class ConsumerController extends Controller
         ]);
         $services = $this
             ->userRepository
-            ->nearByService($validated['latitude'], $validated['longitude'], 10)
-            ->paginate(20);
-        return response()->ok($services);
+            ->nearByService($validated['latitude'], $validated['longitude'], 10);
+
+//        Log::debug(gettype($request->user()));
+        SearchEvent::dispatch($request->user());
+        return response()->ok($services->paginate(20));
     }
 
     public function calculateDistance(Request $request)

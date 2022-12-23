@@ -38,7 +38,15 @@ class ServiceController extends Controller
 
     public function login(ServiceLoginRequest $request): Response
     {
-        if (!Auth::attempt($request->only(['email', 'password']))) {
+        if ( !Auth::attempt(
+            [
+                'email' => $request->input('email'),
+                'password' => $request->input('password'),
+                'type' => function ($query) {
+                    $query->where('type', '=', 'service');
+                }
+            ]
+        ) ) {
             return response()->fail('Invalid credentials', SymfonyResponse::HTTP_UNAUTHORIZED);
         }
         $this->userRepository->updatePosition(Auth::user(), $request);

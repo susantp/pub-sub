@@ -113,7 +113,9 @@ export const AuthContextProvider = ({children}) => {
                     }
                 })
                 .catch(error => {
-                    console.log(error)
+                    toast(error?.response?.data[1].message ?? `Login Failed`, {
+                        toastId: 'loginError',
+                    })
                 })
         })
 

@@ -10,7 +10,7 @@ function MyApp({Component, pageProps}) {
         <AuthContextProvider>
             <PositionContextProvider>
                 <Component {...pageProps} />
-                <ToastContainer position={"bottom-right"} theme={`dark`} limit={1}/>
+                <ToastContainer position={"bottom-right"} theme={`dark`} limit={1} pauseOnFocusLoss={false}/>
             </PositionContextProvider>
         </AuthContextProvider>
     )

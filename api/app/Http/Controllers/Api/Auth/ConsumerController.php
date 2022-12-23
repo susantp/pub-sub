@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Enum;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
@@ -32,7 +33,15 @@ class ConsumerController extends Controller
 
     public function login(Request $request): Response
     {
-        if (!Auth::attempt($request->only(['email', 'password']))) {
+        if (!Auth::attempt(
+            [
+                'email' => $request->input('email'),
+                'password' => $request->input('password'),
+                'type' => function ($query) {
+                    $query->where('type', '=', 'consumer');
+                }
+            ]
+        )) {
             return response()->fail('Invalid credentials', SymfonyResponse::HTTP_UNAUTHORIZED);
         }
 

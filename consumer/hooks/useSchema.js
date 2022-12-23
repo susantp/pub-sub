@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
+import getConfig from "next/config";
 
 function UseSchema(props) {
-
+    const {publicRuntimeConfig: config} = getConfig()
     const [registerPage, setRegisterPage] = useState({
         title: 'Consumer Register',
         description: '',
@@ -30,7 +31,11 @@ function UseSchema(props) {
         },
 
     });
-    return {loginPage, registerPage, pages};
+    const [paths, setPaths] = useState({
+        csrfCookieUrl: {path: `${config.hostApiUrl}/csrf-cookie`},
+        searchServiceRequest: {path: `consumer/searchService`}
+    })
+    return {loginPage, registerPage, pages, paths};
 }
 
 export default UseSchema;

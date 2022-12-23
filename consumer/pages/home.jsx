@@ -10,7 +10,7 @@ import getConfig from "next/config";
 function Home(props) {
     const {user} = useContext(AuthContext);
     const inputRef = useRef("")
-    const {pages: {home}} = useSchema()
+    const {pages: {home}, paths:{searchServiceRequest}} = useSchema()
     const {position, positionError} = useLocation()
     const {publicRuntimeConfig: config} = getConfig()
     const [services, setServices] = useState([]);
@@ -22,7 +22,7 @@ function Home(props) {
             latitude,
             longitude
         }
-        await apiService().post(`consumer/searchService`, payload)
+        await apiService().post(searchServiceRequest.path, payload)
             .then((response) => {
                 const {data} = response
                 setServices(data[1].data.data)
@@ -35,7 +35,7 @@ function Home(props) {
     return (
         <ProtectRoute>
             <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={home.title}/>
-            <div className={`flex justify-center items-center flex-col  gap-y-16 my-4`}>
+            <div className={`flex justify-center items-center flex-col gap-y-16 my-4 h-full`}>
 
                 <div className={`flex justify-center items-center w-full gap-y-2 gap-x-2 `}>
                     <h1 className={`text-2xl lg:text-6xl md:text-4xl  font-semibold text-blue-400 dark:text-white`}>
@@ -48,7 +48,7 @@ function Home(props) {
 
                 <div className={`grid grid-cols-3 gap-2 `}>
                     {
-                        services.length > 0
+                        services?.length > 0
                             ? services.map(service => <ServiceCardComponent key={service.id} name={service.name}
                                                                             distance={service.distance}
                                                                             email={service.email}/>)

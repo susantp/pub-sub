@@ -1,6 +1,7 @@
 import axios from "axios";
 import getConfig from 'next/config'
 import {logOut} from "./auth";
+import {toast} from "react-toastify";
 
 export default function apiService(token = '') {
     const {publicRuntimeConfig: config} = getConfig()

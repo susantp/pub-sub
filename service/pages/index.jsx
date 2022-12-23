@@ -37,20 +37,6 @@ export default function Login() {
         doLogin(data, overview.path).then(r => null)
     }
 
-    /*    useEffect(() => {
-            const pusher = new Pusher('a1091d9e1a6ed6652372', {
-                cluster: 'us3',
-                encrypted: true
-            })
-            const channel = pusher.subscribe('public.room');
-
-            channel.bind('message.new', (data) => {
-                setMessages(oldMessages => [...oldMessages, data])
-            })
-            return () => {
-                pusher.unsubscribe('public.room')
-            }
-        }, []);*/
 
     return (
         <>

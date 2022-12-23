@@ -65,7 +65,7 @@ class RouteServiceProvider extends ServiceProvider
             ->prefix('api/auth/consumer')
             ->group(base_path('routes/consumer/auth.php'));
 
-        Route::middleware(['api'])
+        Route::middleware(['api', 'isConsumer'])
             ->prefix('api/consumer')
             ->group(base_path('routes/consumer/general.php'));
     }
