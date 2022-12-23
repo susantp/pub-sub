@@ -25,8 +25,7 @@
     "nunomaduro/collision": "^6.1",
     "nunomaduro/larastan": "^2.0",
     "phpunit/phpunit": "^9.5.10",
-    "spatie/laravel-ignition": "^1.0",
-    "stechstudio/laravel-php-cs-fixer": "^3.1"
+    "spatie/laravel-ignition": "^1.0"
   },
   "autoload": {
     "psr-4": {
@@ -56,9 +55,6 @@
     ],
     "phpstan": [
       "@php -d memory_limit=1024M vendor/bin/phpstan analyze --xdebug -c phpstan.neon --xdebug"
-    ],
-    "fixer": [
-      "@php artisan fixer:fix"
     ]
   },
   "extra": {
