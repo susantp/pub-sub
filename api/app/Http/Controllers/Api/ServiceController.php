@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Events\Consumer\SearchEvent;
+use App\Events\Service\RequestAccpetedEvent;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -10,25 +11,17 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
-class ConsumerController extends Controller
+class ServiceController extends Controller
 {
     public function __construct(private readonly UserRepository $userRepository)
     {
     }
 
-    public function searchService(Request $request): Response
+    public function acceptConsumer(Request $request): Response
     {
-        $validated = $request->validate([
-            'latitude' => ['required'],
-            'longitude' => ['required'],
-            'type' => ['required', 'string']
-        ]);
-        $services = $this
-            ->userRepository
-            ->nearByService($validated['latitude'], $validated['longitude'], 10);
 
-        SearchEvent::dispatch($request->user());
-        return response()->ok($services->paginate(20));
+        RequestAccpetedEvent::dispatch($request->user());
+        return response()->ok([]);
     }
 
     public function calculateDistance(Request $request)

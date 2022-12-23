@@ -1,17 +1,14 @@
 <?php
 
-namespace App\Events\Consumer;
+namespace App\Events\Service;
 
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class SearchEvent implements ShouldBroadcast
+class RequestAccpetedEvent
 {
     use Dispatchable;
     use InteractsWithSockets;
@@ -28,14 +25,12 @@ class SearchEvent implements ShouldBroadcast
             'createdAt' => now()->toDateTimeString(),
         ];
     }
-
     public function broadcastAs(): string
     {
-        return 'serviceQuery.new';
+        return 'accepted.new';
     }
-
-    public function broadcastOn(): Channel|array
+    public function broadcastOn(): PrivateChannel
     {
-        return new Channel('public.room');
+        return new PrivateChannel('accepted.room');
     }
 }

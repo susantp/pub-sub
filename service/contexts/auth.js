@@ -18,6 +18,8 @@ const AuthContext = createContext({
     },
     doLogout: async () => {
     },
+    doSetAcceptedUser: async () => {
+    },
     loading: false,
     isAuthenticated: false,
 
@@ -26,6 +28,7 @@ const AuthContext = createContext({
 export const AuthContextProvider = ({children}) => {
     const {publicRuntimeConfig: config} = getConfig()
     const [user, setUser] = useState({});
+    const [acceptedUser, setAcceptedUser] = useState({});
     const [loading, setLoading] = useState(true)
     const router = useRouter()
     const loginToast = 'login'
@@ -86,7 +89,7 @@ export const AuthContextProvider = ({children}) => {
             })
             .catch(({response}) => {
                 console.log(response)
-                if(!response?.status >=500){
+                if (!response?.status >= 500) {
                     toast('Registration failed. !!! Please contact support.', {
                         toastId: registerErrorToast,
                         pauseOnFocusLoss: false
@@ -109,7 +112,7 @@ export const AuthContextProvider = ({children}) => {
                         if (user) setUser(user);
                         router.push(redirectPath)
                     } else {
-                        console.log(data[1].message)
+                        // console.log(data[1].message)
                     }
                 })
                 .catch(error => {
@@ -148,9 +151,13 @@ export const AuthContextProvider = ({children}) => {
             })
 
     }
-    // const context = {doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}
+    const doSetAcceptedUser = async (user) => {
+        setAcceptedUser(user)
+    }
+    // const context = {doLogin, doRegister, doLogout, doSetAcceptedUser, user, isAuthenticated: !!user, loading}
     return (
-        <AuthContext.Provider value={{doLogin, doRegister, doLogout, user, isAuthenticated: !!user, loading}}>
+        <AuthContext.Provider
+            value={{doLogin, doRegister, doSetAcceptedUser, doLogout, user, isAuthenticated: !!user, loading}}>
             {children}
         </AuthContext.Provider>
     )

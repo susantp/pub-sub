@@ -108,7 +108,7 @@ export const AuthContextProvider = ({children}) => {
                         if (user) setUser(user);
                         router.push(redirectPath)
                     } else {
-                        console.log('on error ', data[1].message)
+                        // console.log('on error ', data[1].message)
                     }
                 })
                 .catch(error => {

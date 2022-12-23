@@ -1,4 +1,4 @@
-import React, {useContext, useRef, useState} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import AuthContext, {ProtectRoute} from "../contexts/auth";
 import HtmlPageHead from "../components/HtmlPageHead";
 import SearchComponent from "../components/home-page/SearchComponent";
@@ -7,13 +7,16 @@ import useSchema from "../hooks/useSchema";
 import apiService from "../utils/apiService";
 import getConfig from "next/config";
 
+import Pusher from "pusher-js";
 function Home(props) {
     const {user} = useContext(AuthContext);
     const inputRef = useRef("")
-    const {pages: {home}, paths:{searchServiceRequest}} = useSchema()
+    const {pages: {home}, paths: {searchServiceRequest}} = useSchema()
     const {position, positionError} = useLocation()
     const {publicRuntimeConfig: config} = getConfig()
     const [services, setServices] = useState([]);
+
+    const [acceptedRequest, setAcceptedRequest] = useState({})
     const handleQuery = async (e) => {
         const {coords: {latitude, longitude}} = position
         const {value} = inputRef.current
@@ -32,6 +35,20 @@ function Home(props) {
             })
 
     }
+    useEffect(() => {
+        const pusher = new Pusher('a1091d9e1a6ed6652372', {
+            cluster: 'us3',
+            encrypted: true
+        })
+        const channel = pusher.subscribe(`accepted.room`);
+
+        channel.bind('serviceQuery.new', (data) => {
+            setAcceptedRequest(data)
+        })
+        return () => {
+            pusher.unsubscribe('public.room')
+        }
+    }, []);
     return (
         <ProtectRoute>
             <HtmlPageHead metaContent={``} linkRel={``} linkHref={``} metaName={``} title={home.title}/>
@@ -47,13 +64,14 @@ function Home(props) {
                                  placeholder={`Car repairing, Electricity repairing`}/>
 
                 <div className={`grid grid-cols-3 gap-2 `}>
-                    {
+                    {/*{
                         services?.length > 0
                             ? services.map(service => <ServiceCardComponent key={service.id} name={service.name}
                                                                             distance={service.distance}
                                                                             email={service.email}/>)
                             : <h2 className={`text-lg`}>Search for Services</h2>
-                    }
+                    }*/}
+
                 </div>
 
 
